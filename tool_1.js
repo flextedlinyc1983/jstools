@@ -44,3 +44,118 @@ AndroidManifest.prototype.getVersionName = function() {
 
 apiLevels = [5,1,8]
 apiLevels.sort(function(a,b){return b-a;});
+
+var index = 5;
+while (index) {
+    index --;
+    console.log(index);
+}
+
+
+getArticleList().then(function(articles){
+    return getArticle(articles[0].id);
+}).then(function(article){
+    return getAuthor(article.authorId);
+}).then(function(author){
+    alert(author.email);
+});
+
+function getAuthor(id){
+    return new Promise(function(resolve, reject){
+        $.ajax("http://beta.json-generator.com/api/json/get/E105pDLh",{
+            author: id
+        }).done(function(result){
+            resolve(result);
+        })
+    });
+}
+
+function getArticle(id){
+    return new Promise(function(resolve, reject){
+        $.ajax("http://beta.json-generator.com/api/json/get/EkI02vUn",{
+            id: id
+        }).done(function(result){
+            resolve(result);
+        })
+    });
+}
+
+function getArticleList(){
+    return new Promise(function(resolve, reject){
+       $.ajax(
+        "http://beta.json-generator.com/api/json/get/Ey8JqwIh")
+        .done(function(result){
+            resolve(result);
+        }); 
+    });
+}
+
+
+
+
+var object_create = Object.create || function (prototype) {
+    function Type() { }
+    Type.prototype = prototype;
+    return new Type();
+};
+
+var messages = [], progressListeners = [], resolvedPromise;
+
+var deferred = object_create(defer.prototype);
+var promise = object_create(Promise.prototype);
+
+promise.promiseDispatch = function (resolve, op, operands) {
+    var args = array_slice(arguments);
+    if (messages) {
+        messages.push(args);
+        if (op === "when" && operands[1]) { // progress operand
+            progressListeners.push(operands[1]);
+        }
+    } else {
+        Q.nextTick(function () {
+            resolvedPromise.promiseDispatch.apply(resolvedPromise, args);
+        });
+    }
+};
+
+function fulfill(value) {
+    return Promise({
+        "when": function () {
+            return value;
+        },
+        "get": function (name) {
+            return value[name];
+        },
+        "set": function (name, rhs) {
+            value[name] = rhs;
+        },
+        "delete": function (name) {
+            delete value[name];
+        },
+        "post": function (name, args) {
+            // Mark Miller proposes that post with no name should apply a
+            // promised function.
+            if (name === null || name === void 0) {
+                return value.apply(void 0, args);
+            } else {
+                return value[name].apply(value, args);
+            }
+        },
+        "apply": function (thisp, args) {
+            return value.apply(thisp, args);
+        },
+        "keys": function () {
+            return object_keys(value);
+        }
+    }, void 0, function inspect() {
+        return { state: "fulfilled", value: value };
+    });
+}
+
+
+function TestApply1() {
+    this.each(function(){
+        alert(this.innerHTML);
+    });
+}
+TestApply1.apply($('.selected'));
