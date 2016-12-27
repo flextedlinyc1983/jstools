@@ -159,3 +159,12 @@ function TestApply1() {
     });
 }
 TestApply1.apply($('.selected'));
+
+
+function obj() {
+    this.myName = "點部落";
+}
+function TestApply3(arg1, arg2) {
+    alert(this.myName + arg1 + arg2);
+}
+TestApply3.apply(new obj(), ['是個', '好地方']);
