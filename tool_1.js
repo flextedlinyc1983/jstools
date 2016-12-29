@@ -234,3 +234,21 @@ $.widget( "custom.myprogressbar", {
 $('.progressDiv').myprogressbar({ 
     value: 70
 });
+
+
+
+
+<a id="size-12">12</a>
+<a id="size-14">14</a>
+<a id="size-26">26</a>
+function makeSizer(size) {
+  return function() {
+    document.body.style.fontSize = size + 'px';
+  };
+}
+var size12 = makeSizer(12);
+var size14 = makeSizer(14);
+var size26 = makeSizer(26);
+document.getElementById('size-12').onclick = size12;
+document.getElementById('size-14').onclick = size14;
+document.getElementById('size-26').onclick = size26;
