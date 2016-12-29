@@ -202,3 +202,17 @@ $('body').click(function (){
         $(this).addClass('aNewClass'); 
     },this), 1000);
 });
+
+
+var Animal = function(){};
+Animal.prototype.breath = function(){console.log("breath")};
+var Dog = function(){};
+Dog.prototype = new Animal();
+Dog.prototype.wag = function(){console.log('wag')};
+var SuperDog = function(){};
+SuperDog.prototype = new Dog();
+SuperDog.prototype.fly = function(){console.log('fly')};
+var superdog = new SuperDog();
+superdog.breath();
+superdog.wag();
+superdog.fly();
