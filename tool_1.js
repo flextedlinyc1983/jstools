@@ -216,3 +216,21 @@ var superdog = new SuperDog();
 superdog.breath();
 superdog.wag();
 superdog.fly();
+
+
+$.widget( "custom.myprogressbar", {
+    options: {
+        value: '20'
+    },
+    getValue: function(){
+        return this.options.value;
+    },
+    _create: function() {
+        var progress = this.options.value + "%";
+        this.element.text( progress );
+    }
+});
+
+$('.progressDiv').myprogressbar({ 
+    value: 70
+});
