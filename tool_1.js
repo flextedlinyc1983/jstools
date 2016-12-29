@@ -168,3 +168,32 @@ function TestApply3(arg1, arg2) {
     alert(this.myName + arg1 + arg2);
 }
 TestApply3.apply(new obj(), ['是個', '好地方']);
+
+
+function test(n){
+    var b = 10;
+    var c = 20;
+    eval('a'+n+'=b*c');
+}
+test(6);
+
+
+function addDiv(options) {
+    var defaults = {
+        border: "solid 1px black",
+        backgroundColor: "#cccccc",
+        width: "200px",
+        height: "50px",
+        margin: "10px",
+    };
+    var settings = $.extend(defaults, options);
+    $("<div></div>").css(settings).appendTo("body");
+}
+addDiv({ width: "400px" });
+addDiv({ backgroundColor: "orange", height: "100px" });
+
+
+var obj = {'name': 'ted'};
+var handler = function(){ alert(this.name) };
+$(document).on('click', $.proxy(handler, obj));
+
