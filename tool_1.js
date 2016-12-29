@@ -197,3 +197,8 @@ var obj = {'name': 'ted'};
 var handler = function(){ alert(this.name) };
 $(document).on('click', $.proxy(handler, obj));
 
+$('body').click(function (){ 
+    setTimeout($.proxy(function() { 
+        $(this).addClass('aNewClass'); 
+    },this), 1000);
+});
