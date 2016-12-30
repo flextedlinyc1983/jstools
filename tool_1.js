@@ -590,3 +590,284 @@ var factorial = function factorial( number ) {
 })( this );
 
 
+
+
+$('#testdiv').delegate("#test","click",function(){
+    alert('test')
+})
+$('#testdiv').unbind('click');
+
+
+
+function gotop() {
+    $("table, tbody").scrollTop(0);
+}
+gotop(0)
+
+
+function parseIntWithLen(str ,len){
+  if(str.length >= len){
+    return str;
+  }else{
+    return parseIntWithLen("0"+str,len);
+  }
+}
+
+
+
+
+
+(function ($) {
+    $.fn.SLScrollToTop  = function(options) {
+        var defaults    = {
+            'id':           'scrollToTop',
+            'className':    'scrollToTop',
+            'image':        '',
+            'text':         '^ Scroll to Top',
+            'title':        'Scroll to Top',
+            'duration':     500
+        };
+        
+        var options     = $.extend(defaults, options);
+        var $link       = $('<div />', {
+            'id':       options.id,
+            'html':     options.text,
+            'title':    options.title,
+            'class':    options.className
+        }).appendTo('body').hide();
+
+        if (options.image != '') {
+            $('<img src="' + options.image + '" alt="' + options.title + '" />').prependTo($link);
+        }
+
+        $(window).scroll(function() {
+            $this   = $(this);
+
+            if ($this.scrollTop() != 0) {
+                $link.fadeIn();
+            } else {
+                $link.fadeOut();
+            }
+        });
+
+        $link.click(function () {
+            $('body,html').animate({
+                scrollTop: 0
+            }, options.duration);
+        });
+    }
+})(jQuery);
+
+
+<div class="box-footer-button" node-type="box-submit" style="background: url(https://changyan.itc.cn/mdevp/extensions/mobile-cmt-box/031/imgs/button.png) no-repeat center;width:300px;height:300px"></div>
+
+
+
+    $(document).ready(function(){
+        navbar = $("#navbar");
+        NavBtn = $("#NavBtn");
+        fp_logo = $('#myNavHeader > a > img');
+        fb_logo = $('#myNavHeader > ul > li > a > img');
+        
+        //滾動時觸發
+        var scrollTimer = null;
+        $(document).scroll(function() {
+            if (scrollTimer) {
+                clearTimeout(scrollTimer);   // clear any previous pending timer
+            }
+            scrollTimer = setTimeout(handleScroll, 100);   // set new timer
+        });
+
+        //點擊連結滑動到指定位置
+        $(".scroll").click(function(event){
+            if(typeof $(this.hash).offset() != 'undefined'){
+                var nav_h = parseFloat(getCSS('height','HeaderStyle2').replace("px",""));//Header Bar的高度
+                event.preventDefault();
+                $('html,body').animate({scrollTop:$(this.hash).offset().top - nav_h},1000); 
+            }
+        });
+
+
+        //視窗縮放後觸發
+        $(window).resize(function(){
+            SetHeaderStyle();
+        });
+        //Navbar menu被關閉後(動畫結束後)觸發
+        navbar.on('hidden.bs.collapse', function (){
+            NavBarOpen = false;
+            SetHeaderStyle();
+        });
+        //點擊Navbar button後觸發
+        NavBtn.on('click', function () {
+            if(!NavBarOpen)
+            {
+                NavBarOpen = true;
+                SetHeaderStyle();
+            }
+        });
+
+        //apply button event
+        $("#Submit-header").on("click", function(e) {
+            e.preventDefault();
+
+            if( $("#InputShopName-header").val() == '' || $("#InputAddress-header").val() == '' ||
+                $("#InputContactPerson-header").val() == '' || $("#InputPhone-header").val() == '' ||
+                $("#InputEmail-header").val() == '' || $("#InputEIN-header").val() == '' )
+                alert('請確保所有欄位皆已填寫完畢');
+            else if( !validateEmail($("#InputEmail-header").val()) )
+                alert('您的Email不符合規範, 請重新輸入');
+            else if( $("#InputEIN-header").val().length != 8 || !( /^\d+$/.test($("#InputEIN-header").val()) ) )
+                alert('您的統一編號有誤, 請重新輸入');
+            else{
+                //OK, Send Mail, Store DB
+                var Post_obj = {
+                    s_name: $("#InputShopName-header").val(),
+                    s_type: $("#InputShopType-header").val(),
+                    s_address: $("#InputAddress-header").val(),
+                    s_contact_person: $("#InputContactPerson-header").val(),
+                    s_phone: $("#InputPhone-header").val(),
+                    s_email: $("#InputEmail-header").val(),
+                    s_ein: $("#InputEIN-header").val()
+                };
+
+                $.post( "sendmail.php", Post_obj,
+                    function(response1){
+                        $.post( "/vendors/apply_db", Post_obj,
+                            function(response2){
+                                console.log(response2);
+                                alert('已將申請資料送至本公司的服務信箱!');
+
+                                $("#ApplyForm-header")[0].reset();
+                        });
+                });
+            }
+        });
+
+        //Pop window will open
+        $('#Modal-header').on('show.bs.modal', function (event) {
+            //Prevent Background Page Scrolling
+             $("body").addClass("modal-open");
+        });
+
+        //Pop window will close
+        $('#Modal-header').on('hide.bs.modal', function (event) {
+            $("body").removeClass("modal-open");
+        });
+        
+        //When User press the close button
+        $('#modal-close-header').click(function(){
+            $('#Modal-header').modal('hide');
+        });
+
+        
+        function handleScroll(){
+            SetHeaderStyle();
+            SetTopIcon();
+
+            //如果滾到底部, 停止滾動動畫
+            if($(window).scrollTop() + $(window).height() == $(document).height()){
+                $('html, body').stop();
+            }
+        }
+
+        function SetTopIcon(){
+            if($(document).scrollTop() >= ($('#BaselineDOM').position().top+$('#BaselineDOM').outerHeight(true)) * 1.5
+            && $('#BaselineDOM').outerHeight(true) != 0 
+            && top_icon_flag)
+                $('.top_icon').css('display','inline');
+            else
+                $('.top_icon').css('display','none');
+
+        }   
+    });
+    
+    $(window).load(function(){
+        $('.fb_fanbox').css('display','inline-block');
+        
+        //首次執行
+        SetHeaderStyle();
+    });
+    
+    //滾動、Resize、影片播放以及按下Menu Button時設定Navbar Header樣式
+    function SetHeaderStyle()
+    {
+        //滾動到影片底部後, 切換Header class,style以及圖片
+        var nav_h = parseFloat(getCSS('height','HeaderStyle').replace("px",""));
+        if($(document).scrollTop() >= $('#BaselineDOM').position().top+$('#BaselineDOM').outerHeight(true)-nav_h-50
+        && $('#BaselineDOM').outerHeight(true) != 0)
+        {
+            $('nav:first').addClass('HeaderStyle2');
+            $('nav:first').removeClass('HeaderStyle');
+            fp_logo.attr("src","web/images/FP_LOGO.png");
+            fb_logo.attr("src","web/images/FACEBOOK_LOGO_BLACK.png");
+            $('.text_color').attr('style', 'color: gray !important');
+            NavBarBelowBaseline = true;         
+        }
+        else{
+            $('nav:first').addClass('HeaderStyle');
+            $('nav:first').removeClass('HeaderStyle2');
+            fp_logo.attr("src","web/images/FP_LOGO_WHITE.png");
+            fb_logo.attr("src","web/images/FACEBOOK_LOGO.png");
+            $('.text_color').attr('style', 'color: white !important');
+            NavBarBelowBaseline = false;
+        }   
+    
+        //設定collapse部分的樣式
+        if(NavBarBelowBaseline && NavBarOpen && NavBtn.css('display') != 'none')
+        {
+            $('#navbar > ul > li').css('background','rgba(255,255,255,0.8)');
+            navbar.detach(); //相當於剪下的功能
+            navbar.appendTo('nav:first'); //貼上到指定的位置
+            navbar.addClass('dropblock');
+            navbar.removeClass('normalblock');
+        }
+        else if(!NavBarBelowBaseline && NavBarOpen && NavBtn.css('display') != 'none')
+        {
+            $('#navbar > ul > li').css('background','rgba(190,190,190,0.8)');
+            navbar.detach(); //相當於剪下的功能
+            navbar.appendTo('nav:first'); //貼上到指定的位置
+            navbar.addClass('dropblock');
+            navbar.removeClass('normalblock');
+        }
+        else
+        {
+            $('#navbar > ul > li').css('background','');
+            navbar.detach(); //相當於剪下的功能
+            navbar.appendTo('#myNavHeader'); //貼上到指定的位置
+            navbar.addClass('normalblock');
+            navbar.removeClass('dropblock');
+        }
+    }
+    
+
+    //Use to read css value which is not yet applied.
+    function getCSS(prop, fromClass) {
+        var $inspector = $("<div>").css('display', 'none').addClass(fromClass);
+        $("body").append($inspector); // add to DOM, in order to read the CSS property
+        try {
+            return $inspector.css(prop);
+        } finally {
+            $inspector.remove(); // and remove from DOM
+        }
+    };
+
+    function validateEmail(email) {
+        var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+        return re.test(email);
+    }   
+
+    function DetectMobile() {
+       if( navigator.userAgent.match(/Android/i)
+         || navigator.userAgent.match(/webOS/i)
+         || navigator.userAgent.match(/iPhone/i)
+         || navigator.userAgent.match(/iPad/i)
+         || navigator.userAgent.match(/iPod/i)
+         || navigator.userAgent.match(/BlackBerry/i)
+         || navigator.userAgent.match(/Windows Phone/i)
+         ){
+            return true;
+          }
+         else {
+            return false;
+          }
+    }
