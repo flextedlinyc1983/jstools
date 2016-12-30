@@ -419,3 +419,174 @@ Subject.prototype.notify = function( context ){
 
 
 
+var MoneyStack = function(billSize) {
+    this.billSize = billSize;
+    this.next = null;
+}
+MoneyStack.prototype = {
+    withdraw: function(amount) {
+        var numOfBills = Math.floor(amount / this.billSize);
+        if (numOfBills > 0) {
+            // Eject the bills
+            this._ejectMoney(numOfBills);
+            // Shrink the amount by how much money we ejected
+            amount = amount - (this.billSize * numOfBills);
+        }
+        // If there is any money left to withdraw and if we have
+        // another stack in the line, pass the request on
+        amount > 0 && this.next && this.next.withdraw(amount);
+    },
+    // set the stack that comes next in the chain
+    setNextStack: function(stack) {
+        this.next = stack;
+    },
+    // private method that ejects the money
+    _ejectMoney: function(numOfBills) {
+        console.log(numOfBills + " $" + this.billSize
+            + " bill(s) has/have been spit out");
+    }
+}
+var ATM = function() {
+    // Create the stacks of money
+    // We'll show you the implementation for this next
+    var stack100 = new MoneyStack(100),
+        stack50 = new MoneyStack(50),
+        stack20 = new MoneyStack(20),
+        stack10 = new MoneyStack(10),
+        stack5 = new MoneyStack(5),
+        stack1 = new MoneyStack(1);
+    // Set the hierarchy for the stacks
+    stack100.setNextStack(stack50);
+    stack50.setNextStack(stack20);
+    stack20.setNextStack(stack10);
+    stack10.setNextStack(stack5);
+    stack5.setNextStack(stack1);
+    // Set the top stack as a property
+    this.moneyStacks = stack100;
+}
+ATM.prototype.withdraw = function(amount) {
+    this.moneyStacks.withdraw(amount);
+}
+// USAGE
+var atm = new ATM();
+atm.withdraw(186);
+
+
+
+
+
+var retinaMacbook = (function() {
+    //Private variables
+    var RAM, addRAM;
+    RAM = 4;
+    //Private method
+    addRAM = function (additionalRAM) {
+        RAM += additionalRAM;
+    };
+    return {
+        //Public variables and method 
+        USB: undefined,
+        insertUSB: function (device) {
+            this.USB = device;
+        },
+        removeUSB: function () {
+            var device = this.USB;
+            this.USB = undefined;
+            return device;
+        }
+    };
+})();
+
+
+
+
+
+(function(){
+ 
+  var carManager = {
+ 
+    // request information
+    requestInfo: function( model, id ){
+      return "The information for " + model + " with ID " + id + " is foobar";
+    },
+ 
+    // purchase the car
+    buyVehicle: function( model, id ){
+      return "You have successfully purchased Item " + id + ", a " + model;
+    },
+ 
+    // arrange a viewing
+    arrangeViewing: function( model, id ){
+      return "You have successfully booked a viewing of " + model + " ( " + id + " ) ";
+    }
+ 
+  };
+
+    carManager.execute = function ( name ) {
+        return carManager[name] && carManager[name].apply( carManager, [].slice.call(arguments, 1) );
+    };
+    
+    carManager.execute( "buyVehicle", "Ford Escort", "453543" );
+
+})();
+
+
+
+
+
+
+$( '<p id="test">foo <em>bar</em></p>').appendTo("#testdiv");
+
+
+function printArray(arr) {
+  var l = arr.length;
+  for (var i = 0; i < l; i++) {
+    console.log(arr[i]);
+  }
+}
+
+
+var factorial = function factorial( number ) {
+  if ( number < 2 ) {
+    return 1;
+  }
+  return number * factorial( number - 1 );
+};
+
+
+
+(function( global ) {
+  var Module = (function() {
+
+    var data = "secret";
+
+    return {
+      // This is some boolean property
+      bool: true,
+      // Some string value
+      string: "a string",
+      // An array property
+      array: [ 1, 2, 3, 4 ],
+      // An object property
+      object: {
+        lang: "en-Us"
+      },
+      getData: function() {
+        // get the current value of `data`
+        return data;
+      },
+      setData: function( value ) {
+        // set the value of `data` and return it
+        return ( data = value );
+      }
+    };
+  })();
+
+  // Other things might happen here
+
+  // expose our module to the global object
+  global.Module = Module;
+
+})( this );
+
+
