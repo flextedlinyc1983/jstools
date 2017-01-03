@@ -871,3 +871,172 @@ function parseIntWithLen(str ,len){
             return false;
           }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+$.fn.exists = function () {
+    return this.length > 0;
+};
+
+
+$.fn.HashTables = function(){
+
+  var _HashTables = function(){
+    this.items=new Array();
+    this.keyArray=new Array();
+    this.itemsCount=0;
+    this.add = function(key,value){
+      if(!this.containsKey(key)){
+        this.items[key]=value;
+        this.itemsCount++;
+        this.keyArray.push(key);
+      }else{
+        //throw "key '"+key+"' allready exists."
+        this.items[key]=value;
+      }
+    }
+    this.get=function(key){
+      if(this.containsKey(key))
+        return this.items[key];
+      else
+        return typeof(this.items[key]);
+    }
+    this.remove = function(key){
+      if(this.containsKey(key)){
+        delete this.keyArray[key];
+        delete this.items[key];
+        this.itemsCount--;
+      }else{
+        throw "key '"+key+"' does not exists."
+      }
+    }
+    this.containsKey= function(key){
+      return typeof(this.items[key])!="undefined";
+    }
+    this.containsValue = function containsValue(value){
+      for (var item in this.items){
+        if(this.items[item]==value)
+          return true;
+      }
+      return false;
+    }
+    this.contains = function(keyOrValue){
+      return this.containsKey(keyOrValue) || this.containsValue(keyOrValue);
+    }
+    this.clear = function(){
+      this.items=new Array();
+      this.keyArray=new Array();
+      this.itemsCount=0;
+    }
+    this.size = function(){
+      return this.itemsCount;
+    }
+    this.isEmpty = function(){
+      return this.size()==0;
+    } 
+    this.getItems = function(key){
+      return this.items[key];
+    }
+  }
+  return new _HashTables();
+}
+
+
+$('a').removeAttr('title');
+$( "#greatphoto" ).attr({
+    alt: "Beijing Brush Seller",
+    title: "photo by Kelly Clark"
+});
+$('a').addClass('selected highlight');
+$('a').removeClass('selected highlight');
+$('p').css({
+  color: 'red',
+  'background-color': 'blue'
+});
+// 取得下拉選單 (select box) 的值
+$('select.foo').val();
+// 取得 checkbox 欄位的選取值
+$('input:checkbox:checked').val();
+// 取得 radio 欄位的選取值
+$('input:radio[name=bar]:checked').val();
+var offset = $($('a')[2]).offset();
+$('a').eq(1).css({'background-color':'#000'})
+$('a').filter('.selected');
+$('a').not('.selected');
+
+// 將 li 的父元素 (可能是 <ul> 或 <ol>) 背景改為紅色
+$('li').parent().css('background-color', 'red');
+// 將 li 的所有祖先元素背景都改為紅色 (直到 <html> 元素)
+$('li').parents().css('background-color', 'red');
+// 將 li 的所有 <p> 祖先元素背景都改為紅色
+$('li').parents('p').css('background-color', 'red');
+// 將有 .selected class 的 div 所有子元素顏色改為藍色
+$('div').children('.selected').css('color', 'blue');
+
+$('ul').find('a');
+$('a', $('ul'));
+$('p').before('<b>Hello</b>');
+$('p').after('<b>Hello</b>'); 
+$('.inner').wrap('<div class="new"></div>');
+$('.hello').empty();
+$('.hello').remove();
+$('.hello').clone().appendTo('.goodbye');
+
+
+
+
+$.get("http://beta.json-generator.com/api/json/get/Ey8JqwIh",function(result){
+    console.log(result);
+})
+
+if(typeof Object.create !== "function"){
+    Object.create = function (o) {
+        function F() {
+            
+        }
+        F.prototype = o;
+        return new F();
+    }
+}
+
+
+
+var Model = {
+
+}
+
+
+
+
+
+var addChange = function (ob) {
+    ob.change = function (callback) {
+        if(callback){
+            if(!this._change) this._change = [];
+            this._change.push(callback);
+        }else{
+            if(!this._change) return;
+            for (var i = 0; i < this._change.length; i++) {
+                this._change[i].apply(this);
+            }
+        }   
+    };
+};
+
+
+var object = {};
+object.name = 'ted';
+addChange(object);
+object.change(function(){
+    alert('name: ' + this.name);
+})
