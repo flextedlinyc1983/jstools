@@ -1040,3 +1040,90 @@ addChange(object);
 object.change(function(){
     alert('name: ' + this.name);
 })
+
+
+var User = Backbone.Model.extend({
+    initialize: function () {
+        // this.on("invalid",function(model,error){
+        //     console.log('v3');
+        //     console.log(error);
+        // });
+    },
+    validate: function (attrs) {        
+        if(!attrs.email || attrs.email.length < 3){        
+            return "not less than three";
+        }
+    },
+    defaults: {
+        name: "anonymous"
+    }
+});
+var user = new User({"email":"ga"}, {validate:true});
+
+
+
+// user.bind('error', function(model,error){
+//     console.log('v3');
+//     console.log(error);
+// });
+
+user.validationError
+
+
+user.set({"email":"ga"});
+
+user.set({"email":"ga"},{error: function(model,error){
+    console.log('v3')
+    console.log(error)
+}});
+
+
+var Users = Backbone.Collection.extend({
+    model: User
+});
+var users = new Users([{"name":"ted","email":"ted111"},{"name":"ted2","email":"ted222"}], { validate: true })
+users.bind("add",function(user){
+console.log(user.get("name"))
+})
+users.add([{"email":"ted111"}])
+
+var Task = Backbone.View.extend({
+    tagName: 'li',
+    template: _.template($("#connect-item-template").html()),
+    render: function() {
+        $(this.el).html(this.template(this.model.toJSON())); 
+        return this;
+    },
+    el: $('ul.indexPage')
+});   
+
+
+var User = Backbone.Model.extend({
+    initialize: function () {
+        // this.on("invalid",function(model,error){
+        //     console.log('v3');
+        //     console.log(error);
+        // });
+    },
+    validate: function (attrs) {        
+        if(!attrs.email || attrs.email.length < 3){        
+            return "not less than three";
+        }
+    },
+    defaults: {
+        name: "anonymous"
+    }
+});
+var task = new  Task({model: new User({"name":"tedhhh","label_connectName":"123","connectName":'111',"isInUse":'tes',"inUse":"ttt","checked":'ok',"defaultValue":'ddd',"label_delete":'11111'})})
+task.render();
+
+
+
+var PageController = Backbone.Controller.extend({
+    routes: {
+        "connectOperation": connectOperation
+    },
+    connectOperation: function () {
+        console.log('test')
+    }
+});
