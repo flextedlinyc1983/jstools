@@ -3221,3 +3221,426 @@ $(function () {
     new MyView();
 
 });
+
+
+
+var Car = Backbone.Model.extend({
+    initialize: function () {
+        // this.on("invalid",function(model,error){
+        //     console.log('v3');
+        //     console.log(error);
+        // });
+    },
+    validate: function (attrs) {        
+        // if(!attrs.email || attrs.email.length < 3){        
+        //     return "not less than three";
+        // }
+    },
+    defaults: {
+        doors: 4,
+        state: "brand new",
+        color: "silver"
+    }
+});
+
+function VehicleFactory() {}
+ 
+// Define the prototypes and utilities for this factory
+ 
+// Our default vehicleClass is Car
+VehicleFactory.prototype.vehicleClass = Car;
+ 
+// Our Factory method for creating new Vehicle instances
+VehicleFactory.prototype.createVehicle = function ( options ) {
+ 
+  switch(options.vehicleType){
+    case "car":
+      this.vehicleClass = Car;
+      break;
+    case "truck":
+      this.vehicleClass = Truck;
+      break;
+    //defaults to VehicleFactory.prototype.vehicleClass (Car)
+  }
+ 
+  return new this.vehicleClass( options );
+ 
+};
+ 
+// Create an instance of our factory that makes cars
+var carFactory = new VehicleFactory();
+var car = carFactory.createVehicle( {
+            vehicleType: "car",
+            color: "yellow",
+            doors: 6 } );
+
+// var car = new Car({
+//     vehicleType: "car",
+//     color: "yellow",
+//     doors: 6 
+// })
+
+function Truck( options){
+ 
+  this.state = options.state || "used";
+  this.wheelSize = options.wheelSize || "large";
+  this.color = options.color || "blue";
+}
+
+var Truck = Backbone.Model.extend({
+    initialize: function () {
+        // this.on("invalid",function(model,error){
+        //     console.log('v3');
+        //     console.log(error);
+        // });
+    },
+    validate: function (attrs) {        
+        // if(!attrs.email || attrs.email.length < 3){        
+        //     return "not less than three";
+        // }
+    },
+    defaults: {
+        wheelSize: "large",
+        state: "used",
+        color: "blue"
+    }
+});
+
+var truck = carFactory.createVehicle( {
+            vehicleType: "truck",
+            color: "yellow",
+            doors: 6 } );
+
+
+var abstractVehicleFactory = (function () {
+ 
+  // Storage for our vehicle types
+  var types = {};
+ 
+  return {
+      getVehicle: function ( type, customizations ) {
+          var Vehicle = types[type];
+ 
+          return (Vehicle ? new Vehicle(customizations) : null);
+      },
+ 
+      registerVehicle: function ( type, Vehicle ) {
+          var proto = Vehicle.prototype;
+ 
+          // only register classes that fulfill the vehicle contract
+          // if ( proto.drive && proto.breakDown ) {
+          //     types[type] = Vehicle;
+          // }
+          types[type] = Vehicle;
+ 
+          return abstractVehicleFactory;
+      }
+  };
+})();
+
+abstractVehicleFactory.registerVehicle( "car", Car );
+abstractVehicleFactory.registerVehicle( "truck", Truck );
+ 
+// Instantiate a new car based on the abstract vehicle type
+var car = abstractVehicleFactory.getVehicle( "car", {
+            color: "lime green",
+            state: "like new" } );
+ 
+// Instantiate a new truck in a similar manner
+var truck = abstractVehicleFactory.getVehicle( "truck", {
+            wheelSize: "medium",
+            color: "neon yellow" } );
+
+
+
+var Superhero = function( firstName, lastName, powers ){
+ 
+    // Invoke the superclass constructor on the new object
+    // then use .call() to invoke the constructor as a method of
+    // the object to be initialized.
+ 
+    Person.call( this, firstName, lastName );
+ 
+    // Finally, store their powers, a new array of traits not found in a normal "Person"
+    this.powers = powers;
+};
+ 
+Superhero.prototype = Object.create( Person.prototype );
+var superman = new Superhero( "Clark", "Kent", ["flight","heat-vision"] );
+
+
+
+var test1 = {"name1":"ted1","name2":"ted2"}
+var test2 = {"name1":"ted4","name3":"ted3"}
+var test = _.extend(test1, test2);
+
+
+var myMixins = {
+ 
+  moveUp: function(){
+    console.log( "move up" );
+  },
+ 
+  moveDown: function(){
+    console.log( "move down" );
+  },
+ 
+  stop: function(){
+    console.log( "stop! in the name of love!" );
+  }
+ 
+};
+_.extend(Car.prototype, myMixins);
+
+
+
+function MacBook() {
+ 
+  this.cost = function () { return 997; };
+  this.screenSize = function () { return 11.6; };
+ 
+}
+
+var MacBook = Backbone.Model.extend({
+    initialize: function () {
+        // this.on("invalid",function(model,error){
+        //     console.log('v3');
+        //     console.log(error);
+        // });
+    },
+    validate: function (attrs) {        
+        // if(!attrs.email || attrs.email.length < 3){        
+        //     return "not less than three";
+        // }
+    },
+    defaults: {
+        cost: 997,
+        screenSize: 11.6,        
+    }
+});
+
+var nb = new MacBook();
+
+function engraving( macbook ){
+ 
+  var v = macbook.defaults.cost;
+  macbook.cost = function(){
+    return v + 200;
+  };
+ 
+}
+nb.cost();
+
+
+CaseDecorator.prototype.getCost = function(){
+    return this.macbook.cost() + 100.00;
+};
+
+var decoratedMacbookPro = new CaseDecorator( nb );
+decoratedMacbookPro.getCost();
+
+decoratorApp = {
+ 
+    defaults: {
+        validate: false,
+        limit: 5,
+        name: "foo",
+        welcome: function () {
+            console.log( "welcome!" );
+        }
+    },
+ 
+    options: {
+        validate: true,
+        name: "bar",
+        helloWorld: function () {
+            console.log( "hello world" );
+        }
+    },
+ 
+    settings: {},
+ 
+    printObj: function ( obj ) {
+        var arr = [],
+            next;
+        $.each( obj, function ( key, val ) {
+            next = key + ": ";
+            next += $.isPlainObject(val) ? printObj( val ) : val;
+            arr.push( next );
+        } );
+ 
+        return "{ " + arr.join(", ") + " }";
+    }
+ 
+};
+ 
+// merge defaults and options, without modifying defaults explicitly
+decoratorApp.settings = $.extend({}, decoratorApp.defaults, decoratorApp.options);
+
+
+
+
+
+
+var Book = Backbone.Model.extend({
+    initialize: function () {
+        // this.on("invalid",function(model,error){
+        //     console.log('v3');
+        //     console.log(error);
+        // });
+    },
+    validate: function (attrs) {        
+        // if(!attrs.email || attrs.email.length < 3){        
+        //     return "not less than three";
+        // }
+    },
+    defaults: {
+        title: "",
+        author: "", 
+        genre: "", 
+        pageCount: "", 
+        publisherID: "", 
+        ISBN: ""
+    }
+});
+
+
+// Book Factory singleton
+var BookFactory = (function () {
+  var existingBooks = {}, existingBook;
+ 
+  return {
+    createBook: function ( title, author, genre, pageCount, publisherID, ISBN ) {
+ 
+      // Find out if a particular book meta-data combination has been created before
+      // !! or (bang bang) forces a boolean to be returned
+      existingBook = existingBooks[ISBN];
+      if ( !!existingBook ) {
+        return existingBook;
+      } else {
+ 
+        // if not, let's create a new instance of the book and store it
+        var book = new Book( {title:title, author:author, genre:genre, pageCount:pageCount, publisherID:publisherID, ISBN:ISBN });
+        existingBooks[ISBN] = book;
+        return book;
+ 
+      }
+    }
+  };
+ 
+})();
+
+$('ul.connects-list').append($('li.isInUse').clone())
+
+
+
+// BookRecordManager singleton
+var BookRecordManager = (function () {
+ 
+  var bookRecordDatabase = {};
+ 
+  return {
+    // add a new book into the library system
+    addBookRecord: function ( id, title, author, genre, pageCount, publisherID, ISBN, checkoutDate, checkoutMember, dueReturnDate, availability ) {
+ 
+      var book = bookFactory.createBook( title, author, genre, pageCount, publisherID, ISBN );
+ 
+      bookRecordDatabase[id] = {
+        checkoutMember: checkoutMember,
+        checkoutDate: checkoutDate,
+        dueReturnDate: dueReturnDate,
+        availability: availability,
+        book: book
+      };
+    },
+    updateCheckoutStatus: function ( bookID, newStatus, checkoutDate, checkoutMember, newReturnDate ) {
+ 
+      var record = bookRecordDatabase[bookID];
+      record.availability = newStatus;
+      record.checkoutDate = checkoutDate;
+      record.checkoutMember = checkoutMember;
+      record.dueReturnDate = newReturnDate;
+    },
+ 
+    extendCheckoutPeriod: function ( bookID, newReturnDate ) {
+      bookRecordDatabase[bookID].dueReturnDate = newReturnDate;
+    },
+ 
+    isPastDue: function ( bookID ) {
+      var currentDate = new Date();
+      return currentDate.getTime() > Date.parse( bookRecordDatabase[bookID].dueReturnDate );
+    }
+  };
+ 
+})();
+
+
+
+var Photo = Backbone.Model.extend({
+ 
+    // Default attributes for the photo
+    defaults: {
+      src: "placeholder.jpg",
+      caption: "A default image",
+      viewed: false
+    },
+ 
+    // Ensure that each photo created has an `src`.
+    initialize: function() {
+       this.set( { "src": this.defaults.src} );
+    }
+ 
+});
+
+
+var PhotoRouter = Backbone.Router.extend({
+  routes: { "photos/:id": "route" },
+ 
+  route: function( id ) {
+    var item = photoCollection.get( id );
+    var view = new PhotoView( { model: item } );
+ 
+    $('.content').html( view.render().el );
+  }
+});
+
+
+var PhotoView = Backbone.View.extend({
+ 
+    //... is a list tag.
+    tagName: "li",
+ 
+    // Pass the contents of the photo template through a templating
+    // function, cache it for a single photo
+    template: _.template( $("#photo-template").html() ),
+ 
+    // The DOM events specific to an item.
+    events: {
+      "click img": "toggleViewed"
+    },
+ 
+    // The PhotoView listens for changes to
+    // its model, re-rendering. Since there's
+    // a one-to-one correspondence between a
+    // **Photo** and a **PhotoView** in this
+    // app, we set a direct reference on the model for convenience.
+ 
+    initialize: function() {
+      this.model.on( "change", this.render, this );
+      this.model.on( "destroy", this.remove, this );
+    },
+ 
+    // Re-render the photo entry
+    render: function() {
+      $( this.el ).html( this.template(this.model.toJSON() ));
+      return this;
+    },
+ 
+    // Toggle the `"viewed"` state of the model.
+    toggleViewed: function() {
+      this.model.viewed();
+    }
+ 
+});
+
+var test = new PhotoView({model: new Car()});
