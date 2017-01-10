@@ -3644,3 +3644,892 @@ var PhotoView = Backbone.View.extend({
 });
 
 var test = new PhotoView({model: new Car()});
+
+
+
+var Class = function () {
+    var Klass = function () {
+        
+    }
+    Klass.prototype.parent = Klass;
+    Klass.prototype.hello = function () {
+        console.log('hello');
+    }
+    return Klass;
+}
+
+
+
+
+var myRevealingModule = (function () {
+ 
+    var privateVar = "Ben Cherry",
+        publicVar = "Hey there!";
+
+    function privateFunction() {
+        console.log( "Name:" + privateVar );
+    }
+
+    function publicSetName( strName ) {
+        privateVar = strName;
+    }
+
+    function publicGetName() {
+        privateFunction();
+    }
+
+
+    // Reveal public pointers to
+    // private functions and properties
+
+    return {
+        setName: publicSetName,
+        greeting: publicVar,
+        getName: publicGetName
+    };
+
+})();
+ 
+myRevealingModule.setName( "Paul Kinlan" );
+
+
+
+
+
+var mySingleton = (function () {
+ 
+  // Instance stores a reference to the Singleton
+  var instance;
+ 
+  function init() {
+ 
+    // Singleton
+ 
+    // Private methods and variables
+    function privateMethod(){
+        console.log( "I am private" );
+    }
+ 
+    var privateVariable = "Im also private";
+ 
+    var privateRandomNumber = Math.random();
+ 
+    return {
+ 
+      // Public methods and variables
+      publicMethod: function () {
+        console.log( "The public can see me!" );
+      },
+ 
+      publicProperty: "I am also public",
+ 
+      getRandomNumber: function() {
+        return privateRandomNumber;
+      }
+ 
+    };
+ 
+  };
+ 
+  return {
+ 
+    // Get the Singleton instance if one exists
+    // or create one if it doesn't
+    getInstance: function () {
+ 
+      if ( !instance ) {
+        instance = init();
+      }
+ 
+      return instance;
+    }
+ 
+  };
+ 
+})();
+ 
+var myBadSingleton = (function () {
+ 
+  // Instance stores a reference to the Singleton
+  var instance;
+ 
+  function init() {
+ 
+    // Singleton
+ 
+    var privateRandomNumber = Math.random();
+ 
+    return {
+ 
+      getRandomNumber: function() {
+        return privateRandomNumber;
+      }
+ 
+    };
+ 
+  };
+ 
+  return {
+ 
+    // Always create a new Singleton instance
+    getInstance: function () {
+ 
+      instance = init();
+ 
+      return instance;
+    }
+ 
+  };
+ 
+})();
+ 
+ 
+// Usage:
+ 
+var singleA = mySingleton.getInstance();
+var singleB = mySingleton.getInstance();
+console.log( singleA.getRandomNumber() === singleB.getRandomNumber() ); // true
+ 
+var badSingleA = myBadSingleton.getInstance();
+var badSingleB = myBadSingleton.getInstance();
+console.log( badSingleA.getRandomNumber() !== badSingleB.getRandomNumber() ); // true
+
+
+
+
+
+var pubsub = {};
+ 
+(function(myObject) {
+ 
+    // Storage for topics that can be broadcast
+    // or listened to
+    var topics = {};
+ 
+    // An topic identifier
+    var subUid = -1;
+ 
+    // Publish or broadcast events of interest
+    // with a specific topic name and arguments
+    // such as the data to pass along
+    myObject.publish = function( topic, args ) {
+ 
+        if ( !topics[topic] ) {
+            return false;
+        }
+ 
+        var subscribers = topics[topic],
+            len = subscribers ? subscribers.length : 0;
+ 
+        while (len--) {
+            subscribers[len].func( topic, args );
+        }
+ 
+        return this;
+    };
+ 
+    // Subscribe to events of interest
+    // with a specific topic name and a
+    // callback function, to be executed
+    // when the topic/event is observed
+    myObject.subscribe = function( topic, func ) {
+ 
+        if (!topics[topic]) {
+            topics[topic] = [];
+        }
+ 
+        var token = ( ++subUid ).toString();
+        topics[topic].push({
+            token: token,
+            func: func
+        });
+        return token;
+    };
+ 
+    // Unsubscribe from a specific
+    // topic, based on a tokenized reference
+    // to the subscription
+    myObject.unsubscribe = function( token ) {
+        for ( var m in topics ) {
+            if ( topics[m] ) {
+                for ( var i = 0, j = topics[m].length; i < j; i++ ) {
+                    if ( topics[m][i].token === token ) {
+                        topics[m].splice( i, 1 );
+                        return token;
+                    }
+                }
+            }
+        }
+        return this;
+    };
+}( pubsub ));
+
+
+
+var Task = Backbone.View.extend({
+    // tagName: 'li',
+    // template: _.template($("#connect-item-template").html()),
+    // render: function() {
+    //     $(this.el).html(this.template(this.model.toJSON())); 
+    //     return this;
+    // },
+    // el: $('ul.indexPage'),
+    sayFoo: function () {
+        console.log('origin')
+    }
+}); 
+
+var MyMixin = {
+  foo: "bar",
+  sayFoo: function(){
+    console.log('mixin')
+  }
+}
+
+
+_.extend(Task.prototype, MyMixin);
+
+myView = new Task();
+myView.sayFoo();
+
+
+
+
+
+
+
+
+
+
+var object = {};
+
+_.extend(object, Backbone.Events);
+
+object.on("alert", function(msg) {
+  alert("Triggered " + msg);
+});
+
+object.trigger("alert", "an event");
+
+object.off("alert");
+
+
+
+
+
+
+var Sidebar = Backbone.Model.extend({
+  promptColor: function() {
+    var cssColor = prompt("Please enter a CSS color:");
+    this.set({color: cssColor});
+  }
+});
+
+window.sidebar = new Sidebar;
+
+sidebar.on('change:color', function(model, color) {
+  // $('#sidebar').css({background: color});
+  $('.connection a').css({background: color});
+  console.log('test')
+  
+});
+
+sidebar.set({color: 'black'});
+
+sidebar.promptColor();
+
+
+
+
+
+
+
+var User = Backbone.Model.extend({
+    initialize: function () {
+        // this.on("invalid",function(model,error){
+        //     console.log('v3');
+        //     console.log(error);
+        // });
+    },
+    validate: function (attrs) {        
+        if(!attrs.email || attrs.email.length < 3){        
+            return "not less than three";
+        }
+    },
+    defaults: {
+        name: "anonymous"
+    }
+});
+
+
+var Note = Backbone.Model.extend({
+
+  initialize: function() { ... },
+
+  author: function() { ... },
+
+  coordinates: function() { ... },
+
+  allowedToEdit: function(account) {
+    return true;
+  }
+
+});
+
+var PrivateNote = Note.extend({
+
+  allowedToEdit: function(account) {
+    return account.owns(this);
+  }
+
+});
+
+
+var Library = Backbone.Collection.extend({
+
+  model: function(attrs, options) {
+    if (condition) {
+      return new PublicDocument(attrs, options);
+    } else {
+      return new PrivateDocument(attrs, options);
+    }
+  }
+
+});
+
+
+
+
+var Chapter  = Backbone.Model.extend({});
+var chapters = new Backbone.Collection();
+
+chapters.comparator = 'page';
+
+chapters.add(new Chapter({page: 9, title: "The End"}));
+chapters.add(new Chapter({page: 5, title: "The Middle"}));
+chapters.add(new Chapter({page: 1, title: "The Beginning"}));
+
+alert(chapters.pluck('title'));
+
+var musketeers = chapters.where({title: "The End"});
+musketeers[0] ==chapters.models[2]
+
+
+var Meal = Backbone.Model.extend({
+  idAttribute: "_id"
+});
+
+var cake = new Meal({ _id: 1, name: "Cake" });
+alert("Cake id: " + cake.id);
+
+
+
+var Book = Backbone.Model.extend({urlRoot : '/books',idAttribute:"name"});
+
+var solaris = new Book({"name": "1083-lem-solaris"});
+
+alert(solaris.url());
+
+solaris.set({"name":"ted"})
+solaris.previous("name")
+
+
+
+
+var Chapter  = Backbone.Model;
+
+var Library = Backbone.Collection.extend({
+  modelId: function(attrs) {
+    return attrs.page;
+  }
+});
+var chapters = new Library();
+chapters.comparator = 'page';
+
+chapters.add(new Chapter({page: 9, title: "The End"}));
+chapters.add(new Chapter({page: 5, title: "The Middle"}));
+chapters.add(new Chapter({page: 1, title: "The Beginning"}));
+
+chapters.get(1)
+
+
+
+
+var ships = new Backbone.Collection();
+
+ships.on("add", function(ship) {
+  console.log("Ahoy " + ship.get("name") + "!");
+});
+
+ships.add([
+  {name: "Flying Dutchman"},
+  {name: "Black Pearl"}
+]);
+
+
+
+var friends = new Backbone.Collection([
+  {name: "Athos",      job: "Musketeer"},
+  {name: "Porthos",    job: "Musketeer"},
+  {name: "Aramis",     job: "Musketeer"},
+  {name: "d'Artagnan", job: "Guard"},
+]);
+
+var musketeers = friends.where({job: "Musketeer"});
+
+
+
+
+
+_.map([1, 2, 3], function(num){ return num * 3; });
+
+
+window.AppView = Backbone.View.extend({
+    el: $("body"),
+    initialize: function () {
+//         this.friends = new Friends({ view: this });
+    },
+    events: {
+        "click":  "showPrompt"
+    },
+    showPrompt: function () {
+        var username = "ted";
+        alert(username);
+    }
+});
+var appview = new AppView;
+
+
+Backbone.View.extend({
+    el: $("body"),
+    initialize: function () {
+        if (this.model) {
+            this.model.on("change", this.render, this);
+        }
+    },
+    events: {
+        "click":  "showPrompt"
+    },
+    showPrompt: function () {
+        var username = "ted";
+        alert(username);
+    },
+    render: function () {
+        
+    }
+});
+
+
+
+Backbone.View.extend({
+ 
+    initialize: function(){
+        this.listenTo(this.model, "change:foo", this.doStuff);
+    },
+ 
+    doStuff: function(foo){
+        // do stuff in response to "foo" changing
+    }
+ 
+    // we don't need this. the default `remove` method calls `stopListening` for us
+    // remove: function(){
+        // this.stopListening();
+        // ...
+    //}
+})
+
+
+
+
+
+var DocumentRow = Backbone.View.extend({
+
+  tagName: "li",
+
+  className: "document-row",
+
+  events: {
+    "click .icon":          "open",
+    "click .button.edit":   "openEditDialog",
+    "click .button.delete": "destroy"
+  },
+
+  initialize: function() {
+    this.listenTo(this.model, "change", this.render);
+  },
+
+  render: function() {
+
+  }
+
+});
+
+var casCookie = "casCert";
+var cookieName = "Neo";
+var uuidName = "symphoxUuid";
+var path = "/";
+var domain = "treemall.com.tw";
+var ref = document.referrer;
+var curUrl = document.URL;
+var curUrlCleaned = "";
+var pageTitle = document.title;
+var uuid = "";
+var memNum = "";
+var memType = "";
+var memAge = "";
+var memSex = "";
+var utm_source = "";
+var utm_medium = "";
+var utm_campaign = "";
+var canonical = "";
+var symphoxUuid = "";
+var recommendation = "";
+var rootSource = "";
+var cartNo="";
+
+var customizeCookie = "symphoxTemp";
+var customizeValue = "";
+
+function missionStart(){
+    initCustomizeValue();
+    generateEDMMsg();
+    generateCanonicalMsg();
+    generateCleanedCurUrl();
+    generateURLSource();
+    pathfinder();
+    checkCookie();
+}
+
+function trim(string){
+    return string.replace(/^[\s]+|[\s]+$/g,"").replace(/^　+|　+$/g,"");
+}
+
+function getCookieValue(name, cookie){
+    var unescapeCookie = decodeURIComponent(cookie);
+    return trim(unescapeCookie).substring(name.length+1, unescapeCookie.length);
+}
+
+//放客製參數
+function setCustomizeValue(name, value){
+    customizeValue += name + "=" + value + ",";
+    document.cookie = customizeCookie + "=" + encodeURIComponent(customizeValue);
+}
+
+//檢查cookie
+function checkCookie(){
+    var hasCookie = false;
+    var hasUuid = false;
+    var cookies = document.cookie.split(";");
+    for(var i=0;i<cookies.length;i++){
+        if(cookies[i].indexOf(cookieName) != -1){
+            hasCookie = true;
+            var cookieValue = getCookieValue(cookieName, cookies[i]);
+            uuid = cookieValue.split(",")[0];
+        }
+        if(cookies[i].indexOf(casCookie) != -1){
+            var cookieValue = getCookieValue(casCookie, cookies[i]);
+            memNum = cookieValue.split(",")[0];
+            memSex = cookieValue.split(",")[1];
+            memAge = cookieValue.split(",")[2];
+            memType = cookieValue.split(",")[3];
+        }
+        if(cookies[i].indexOf(uuidName) != -1){
+            hasUuid = true;
+            var cookieValue = getCookieValue(uuidName, cookies[i]);
+            symphoxUuid = cookieValue.split(",")[0];
+        }
+        if(cookies[i].indexOf("symphoxRecommendation") != -1){
+            var cookieValue = getCookieValue("symphoxRecommendation", cookies[i]);
+            recommendation = cookieValue.split(",")[0];
+        }
+        if(cookies[i].indexOf("cartNo")!=-1){
+            var cookieValue = getCookieValue("cartNo", cookies[i]);
+            cartNo=cookieValue.split(",")[0];
+        }
+        //找到就跳出不用跑完
+        if(hasCookie && memNum != "" && hasUuid && recommendation != ""){
+            break;
+        }
+    }
+    
+    if(!hasCookie){
+        newCookie();
+    }
+    if(!hasUuid){
+        newUuidCookie();
+    }
+    backToZion(generateMsg());
+}
+
+//初始化客製參數(如果cookie有就從cookie拿)
+function initCustomizeValue(){
+    var cookies = document.cookie.split(";");
+    for(var i=0;i<cookies.length;i++){
+        if(cookies[i].indexOf(customizeCookie) != -1){
+            customizeValue = getCookieValue(customizeCookie, cookies[i]);
+            break;
+        }
+    }
+}
+
+//取客製參數
+function getCustomizeValue(name){
+    var params = customizeValue.split(",");
+    var result = "";
+    for(var i=0;i<params.length;i++){
+        var tempStr = params[i].split("=")[0];
+        if(tempStr == name){
+            result = params[i].split("=")[1];
+        }
+    }
+    return result;
+}
+
+function generateMsg(event, eventId){
+    curUrl = document.URL;
+    var orderNum = "";
+    if(customizeValue.indexOf("orderNum")!=-1){
+        orderNum = getCustomizeValue("orderNum");
+    }
+//  if(canonical != "" && canonical != "http://www.treemall.com.tw"){
+//      curUrl = canonical;
+//  }
+    
+    if(canonical.indexOf("/showroom/product?") != -1){
+        curUrl = canonical+"&utm_source="+utm_source+"&utm_medium="+utm_medium+"&utm_campaign="+utm_campaign;
+    }
+    
+    if(event != null && eventId != null) {
+        curUrl = curUrl + '#' + eventId + '=' + event;
+    }
+    else if(event != null){
+        curUrl = curUrl + '#event='+event;
+    }
+    
+    var lt = (typeof _tat=='undefined' || _tat == null)?0:(new Date() - _tat)/1000;
+    
+    var msg = uuid+","+memNum+","+ref+","+curUrl+","+utm_source+","+utm_medium+","+utm_campaign+","+orderNum+","+memSex+","+memAge+","+memType+","+pageTitle+","+symphoxUuid+","+lt+","+recommendation+","+rootSource+","+cartNo;
+    msg = encodeURIComponent(msg);
+    return msg;
+}
+
+function generateEDMMsg(){
+    if(curUrl.indexOf("utm_source")!=-1 || curUrl.indexOf("utm_medium")!=-1 || curUrl.indexOf("utm_campaign")!=-1 ||
+            curUrl.indexOf("source")!=-1 || curUrl.indexOf("medium")!=-1 || curUrl.indexOf("campaign")!=-1){
+        if (curUrl.split("?")[1] === undefined || curUrl.split("?")[1] == "undefined") return;
+        var params = curUrl.split("?")[1].split("&");
+        for(var i=0;i<params.length;i++){
+            var tempStr = params[i].split("=")[0];
+            if(tempStr == "utm_source"){
+                utm_source = params[i].split("=")[1];
+                if(utm_source === undefined || utm_source == "undefined"){
+                    utm_source = "";
+                }
+            }
+            if(tempStr == "utm_medium"){
+                utm_medium = params[i].split("=")[1];
+                if(utm_medium === undefined || utm_medium == "undefined"){
+                    utm_medium = "";
+                }
+            }
+            if(tempStr == "utm_campaign"){
+                utm_campaign = params[i].split("=")[1];
+                if(utm_campaign === undefined || utm_campaign == "undefined"){
+                    utm_campaign = "";
+                }
+            }
+            if(tempStr == "source"){
+                utm_source = params[i].split("=")[1];
+                if(utm_source === undefined || utm_source == "undefined"){
+                    utm_source = "";
+                }
+            }
+            if(tempStr == "medium"){
+                utm_medium = params[i].split("=")[1];
+                if(utm_medium === undefined || utm_medium == "undefined"){
+                    utm_medium = "";
+                }
+            }
+            if(tempStr == "campaign"){
+                utm_campaign = params[i].split("=")[1];
+                if(utm_campaign === undefined || utm_campaign == "undefined"){
+                    utm_campaign = "";
+                }
+            }
+        }
+    }
+}
+
+function generateCanonicalMsg(){
+    var links = document.getElementsByTagName("link");
+    for(var i=0;i<links.length;i++){
+        if(links[i].getAttribute("rel") == "canonical"){
+            canonical = links[i].getAttribute("href");
+            break;
+        }
+    }
+}
+
+function generateCleanedCurUrl(){
+    
+    if(curUrl.split("://")[1] === undefined || curUrl.split("://")[1] == "undefined") return;
+    var url = curUrl.split("://")[1];
+    
+    if (url.split("?")[1] === undefined || url.split("?")[1] == "undefined"){
+        curUrlCleaned = url;
+    }else{
+        var params = url.split("?")[1].split("&");
+        var querystring = "";
+        for(var i=0;i<params.length;i++){
+            var tempStr = params[i].split("=")[0];
+            if(tempStr != "utm_source" && tempStr != "utm_medium" && tempStr != "utm_campaign" 
+                && tempStr != "source" && tempStr != "medium" && tempStr != "campaign"){
+                if(querystring == ""){
+                    querystring = querystring + params[i];
+                }else{
+                    querystring = querystring + "&" + params[i];
+                }
+            }
+        }
+        if(querystring == ""){
+            curUrlCleaned = url.split("?")[0];
+        }else{
+            curUrlCleaned = url.split("?")[0] + "?" + querystring;
+        }
+    }
+    
+}
+
+function generateURLSource(){
+    var cookies = document.cookie.split(";");
+    var hasSessionSource = false;
+    for(var i=0;i<cookies.length;i++){
+        if(cookies[i].indexOf("sessionSource") != -1){
+            hasSessionSource = true;
+            var cookieValue = getCookieValue("sessionSource", cookies[i]);
+            rootSource = cookieValue;
+            break;
+        }
+    }
+    
+    if(!hasSessionSource){
+        if(utm_medium != "" && utm_medium == "edm"){
+            rootSource = utm_medium;
+        }else if(ref != "undefined" && ref != ""){
+            if(ref.indexOf("google") != -1){
+                rootSource = "google";
+            }else if(ref.indexOf("yahoo") != -1){
+                rootSource = "yahoo";
+            }else if(ref.indexOf("facebook") != -1){
+                rootSource = "facebook";
+            }else if(ref.indexOf("bing") != -1){
+                rootSource = "bing";
+            }else if(ref.indexOf("findprice") != -1){
+                rootSource = "findprice";
+            }else if(ref.indexOf("tw100s") != -1){
+                rootSource = "tw100s";
+            }else{
+                rootSource = "undefined2";
+            }
+        }else{
+            rootSource = "default2";
+        }
+        
+        document.cookie = "sessionSource=" + encodeURIComponent(rootSource) + ";path=" + path + ";domain=" + domain;
+        return rootSource;
+    }
+    
+    
+}
+
+
+function uuidGenerator() {
+    var S4 = function() {
+        return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+    };
+    return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+}
+
+//產生Neo
+function newCookie(){
+    uuid = Math.round(Math.random()*2147483647);
+    var cookieValue = uuid;
+    document.cookie = cookieName + "=" + encodeURIComponent(cookieValue) + ";path=" + path + ";domain=" + domain;
+    return cookieValue;
+}
+
+function newUuidCookie(){
+    symphoxUuid = uuidGenerator();
+    var cookieValue = symphoxUuid;
+    var expires = new Date();
+    expires.setTime(expires.getTime() + 60 * 60 * 24 * 30 * 1000);
+    document.cookie = uuidName + "=" + encodeURIComponent(cookieValue) + ";path=" + path + ";domain=" + domain + ";expires=" + expires.toGMTString();
+    return cookieValue;
+}
+
+function pathfinder(){
+    if(utm_medium != "" && utm_campaign != "" && curUrlCleaned != ""){
+        var cookieValue = utm_medium + "|" + utm_campaign + "|" + curUrlCleaned;
+        document.cookie = "pathFinder=" + encodeURIComponent(cookieValue) + ";path=" + path + ";domain=" + domain;
+        return cookieValue;
+    }
+}
+
+function backToZion(message){
+    var http_request = false;
+    if (window.XMLHttpRequest) {
+        http_request = new XMLHttpRequest();
+        if (http_request.overrideMimeType) {
+            http_request.overrideMimeType('text/html');
+        }
+    }else if (window.ActiveXObject) {
+        try {
+            http_request = new ActiveXObject("Msxml2.XMLHTTP");
+        }catch (e) {
+            try {
+                http_request = new ActiveXObject("Microsoft.XMLHTTP");
+            }catch (e) {
+                
+            }
+        }
+    }
+    
+    if (!http_request) {
+        alert('Giving up :( Cannot create an XMLHTTP instance');
+        return false;
+    }
+    
+    var http_url = "/zion/treemall";
+    
+    http_request.open("POST", http_url, true);
+    //用post傳參數要加下面這行
+    http_request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    http_request.send("msg=" + message);
+}
+
+
+
+
+
+
+
+
+
+
+
+var Book = Backbone.Model.extend({urlRoot : '/books'});
+
+var book = new Book({
+  title: "The Rough Riders",
+  author: "Theodore Roosevelt",
+  id:"ted"
+});
+
+book.save();
+
+
+var Book = Backbone.Model.extend({urlRoot : '/books'});
+var solaris = new Book({id: "1083-lem-solaris"});
+
+
+
