@@ -5027,3 +5027,7 @@ test.create({title: "testttt" + i,type:"create"});
 console.log(i)
 }
 setInterval(foo,1000);
+
+
+http://localhost:3000/about_detail/3127
+http://localhost:3000/about_detail
