@@ -4533,3 +4533,497 @@ var solaris = new Book({id: "1083-lem-solaris"});
 
 
 
+var AppView = Backbone.View.extend({
+  // el - stands for element. Every view has a element associate in with HTML
+  //      content will be rendered.
+  el: '[data-role=footer]',
+  // It's the first function called when this view it's instantiated.
+  initialize: function(){
+    this.render();
+  },
+  // $el - it's a cached jQuery object (el), in which you can use jQuery functions
+  //       to push content. Like the Hello World in this case.
+  render: function(){
+    this.$el.html("Hello World");
+  }
+});
+var test = new AppView();
+test.remove();
+
+
+var Book = Backbone.Model.extend({
+    defaults: {
+        ID: "",
+        BookName: ""
+    },
+    idAttribute: "ID",
+   
+    urlRoot: 'http://localhost:51377/api/Books'
+});
+
+
+var BooksCollection = Backbone.Collection.extend({
+    model: Book,
+});
+
+var book1 = new Book({ ID: 1,  BookName: "Book 1" });
+var book2 = new Book({ ID: 2, BookName: "Book 2" });
+var collection2 = new BooksCollection([book1, book2]);
+collection2.toJSON();
+
+var book3_changed = new Book({ ID: 2, BookName: "Changed Model" });
+collection2.add(book3_changed);
+
+collection2.add(book3_changed, { merge: true });
+
+
+var BooksCollection = Backbone.Collection.extend({
+    model: Book,
+ 
+    url: "http://localhost:51377/api/Books",
+});
+var collection4 = new BooksCollection();
+collection4.fetch();
+var collection4 = new BooksCollection();
+collection4.fetch({
+    success: function (collection4, response) {
+        // fetch successful, lets iterate and update the values here
+        collection4.each(function (item, index, all) {
+            item.set("BookName", item.get("BookName") + "_updated"); // lets update all book names here
+            item.save();
+        });
+    }
+});
+
+
+
+
+
+var Book = Backbone.Model.extend({
+    defaults: {
+        ID: "",
+        BookName: ""
+    }
+});
+
+var Catalog = Backbone.Model.extend({
+    defaults: {
+        ID: "",
+        CatalogName: ""
+    },
+
+    // code ommitted for brevity
+
+    bookChanged : function(book) {
+        alert(book.get("BookName"));
+    }
+});
+var catalog = new Catalog();
+
+var book = new Book({BookName : "test book1"});                
+
+catalog.listenTo(book, 'changed', catalog.bookChanged);
+
+book.trigger('changed', book);
+
+catalog.stopListening(book);
+
+
+catalog.listenToOnce(book, 'changed', catalog.bookChanged);
+
+
+
+
+
+
+
+
+
+var Book = Backbone.Model.extend({
+    defaults: {
+        ID: "",
+        BookName: ""
+    }
+});
+var BooksCollection = Backbone.Collection.extend({
+    model: Book,
+ 
+    url: "http://localhost:51377/api/Books",
+});
+var bookView = Backbone.View.extend({
+    tagname: "li",
+    model: Book,
+    render: function (){
+        this.$el.html('<li>' + this.model.get("BookName") + '</li>');
+        return this;
+    }
+});
+
+var bookListView = Backbone.View.extend({
+    model: BooksCollection,
+
+    render: function() {
+        this.$el.html(); // lets render this view
+        
+        var self = this;
+
+        // for(var i = 0; i < this.model.length; ++i) {
+        //     // lets create a book view to render
+        //     var m_bookView = new bookView({model: this.model.at(i)});
+
+        //     // lets add this book view to this list view
+        //     this.$el.append(m_bookView.$el); 
+        //     m_bookView.render(); // lets render the book           
+        // } 
+
+        _.each(this.model.models, this.renderBook, this);
+
+         return this;
+    },
+    renderBook:function (book) {
+        $(this.el).append(new bookView({model:book}).render().el);
+    }
+});
+
+var book1 = new Book({ ID: 1, BookName: "Book 1" });
+var book2 = new Book({ ID: 2, BookName: "Book 2" });
+var book3 = new Book({ ID: 3, BookName: "Book 3" });
+var book4 = new Book({ ID: 4, BookName: "Book 4" });
+var book5 = new Book({ ID: 5, BookName: "Book 5" });
+var bookCollection = new BooksCollection([book1, book2, book3, book4, book5]);
+var bookList = null;
+
+$(document).ready(function () {
+    bookList = new bookListView({ el: $("#bookList"), model: bookCollection });
+    bookList.render();
+});
+
+<div id='bookList'>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var Todo = Backbone.Model.extend({
+    initialize: function () {
+        // this.on("invalid",function(model,error){
+        //     console.log('v3');
+        //     console.log(error);
+        // });
+    },
+    validate: function (attrs) {        
+        // if(!attrs.email || attrs.email.length < 3){        
+        //     return "not less than three";
+        // }
+    },
+    defaults: function(){
+        return {
+            title:"",
+            order:Todos.nextOrder(),
+            done: false
+        }
+    },
+    idAttribute: "order"
+});
+
+var TodoList = Backbone.Collection.extend({
+    model: Todo,
+    localStorage: new Backbone.LocalStorage("todos-backbone"),    
+
+    nextOrder: function() {
+      if (!this.length) return 1;
+      return this.last().get('order') + 1;
+    },
+    done: function() {
+      return this.where({done: true});
+    },
+});
+
+var Todos = new TodoList();
+
+// Todos.create({title: this.input.val()});
+// Todos.create({title: "ted"});
+
+
+
+
+
+
+
+var TodoView = Backbone.View.extend({
+    tagName: 'div',
+    // template: _.template($("#item-template").html()),
+    render: function() {
+        console.log('TodoView');
+        // $(this.el).html(this.template(this.model.toJSON())); 
+        this.$el.html('<li>' + this.model.get('title') + '</li>');
+        return this;
+    },
+    initialize: function () {
+        this.listenTo(this.model, 'change', this.render);
+        this.listenTo(this.model, 'destroy', this.remove);
+    },
+
+    // el: $('ul.indexPage')
+});   
+
+
+var AppView = Backbone.View.extend({
+    model: TodoList,
+    el: $("#todoapp"),
+    render: function() {
+        console.log('AppView');
+        this.$el.html(); // lets render this view
+        
+        var self = this;
+
+        // for(var i = 0; i < this.model.length; ++i) {
+        //     // lets create a book view to render
+        //     var m_bookView = new bookView({model: this.model.at(i)});
+
+        //     // lets add this book view to this list view
+        //     this.$el.append(m_bookView.$el); 
+        //     m_bookView.render(); // lets render the book           
+        // } 
+
+        _.each(this.model.models, this.renderTodos, this);
+
+         return this;
+    },
+    renderTodos:function (todo) {
+        $(this.el).append(new TodoView({model:todo}).render().el);
+    },
+    initialize: function () {
+        // this.listenTo(this.model, 'all', this.render);
+        this.listenTo(this.model, 'add', this.addOne);
+         // this.listenTo(this.model, 'reset', this.addAll);
+    },
+    addOne: function(todo) {
+      var view = new TodoView({model: todo});
+      $(this.el).append(view.render().el);
+    },
+    addAll: function() {
+      this.model.each(this.addOne, this);
+    },
+});
+
+
+Todos.create({title: "tedtrue",done:true});
+Todos.create({title: "bellefalse",done:false});
+Todos.create({title: "tedtrue2",done:true});
+Todos.create({title: "bellefalse2",done:false});
+bookList = new AppView({ model: Todos });
+bookList.render();
+
+
+// Todos.add(book3_changed, { merge: true });
+
+
+<div id='todoapp'>
+</div>
+
+
+var test = Todos.where({done:true})
+_.invoke(test, 'destroy');
+
+
+Todos.get(1).set({title:"test"})
+Todos.get(1).save({title:"test111"})
+
+var test = new Todo({title: "ted12345",done:true});
+Todos.add(test);
+test.save();
+
+
+var test = Todos.last()
+test.destroy({
+    success:function () {            
+        window.history.back();
+        // alert('Wine deleted successfully');
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var Option = Backbone.Model.extend({
+    initialize: function () {
+        // this.on("invalid",function(model,error){
+        //     console.log('v3');
+        //     console.log(error);
+        // });
+    },
+    validate: function (attrs) {        
+        // if(!attrs.email || attrs.email.length < 3){        
+        //     return "not less than three";
+        // }
+    },
+    defaults: function(){
+        return {
+            title:"",
+            order:options.nextOrder(),
+            done: false
+        }
+    },
+    idAttribute: "order"
+});
+
+
+var OptionView = Backbone.View.extend({
+    tagName: 'option',
+    // template: _.template($("#item-template").html()),
+    render: function() {
+        // console.log('TodoView');
+        // $(this.el).html(this.template(this.model.toJSON())); 
+        // this.$el.html('<li>' + this.model.get('title') + '</li>');
+        this.$el.attr({value:this.model.id});
+        this.$el.html(this.model.get('title'));
+        return this;
+    },
+    initialize: function () {
+        this.listenTo(this.model, 'change', this.render);
+        this.listenTo(this.model, 'destroy', this.remove);
+    },
+
+    // el: $('ul.indexPage')
+});   
+
+var OptionList = Backbone.Collection.extend({
+    model: Option,
+    localStorage: new Backbone.LocalStorage("options-backbone"),    
+
+    nextOrder: function() {
+      if (!this.length) return 1;
+      return this.last().get('order') + 1;
+    },
+    done: function() {
+      return this.where({done: true});
+    },
+});
+
+var options = new OptionList();
+
+
+var SelectView = Backbone.View.extend({
+    model: OptionList,
+    el: $("#todoapp"),
+    render: function() {
+        console.log('AppView');
+        this.$el.html(); // lets render this view
+        
+        var self = this;
+
+        // for(var i = 0; i < this.model.length; ++i) {
+        //     // lets create a book view to render
+        //     var m_bookView = new bookView({model: this.model.at(i)});
+
+        //     // lets add this book view to this list view
+        //     this.$el.append(m_bookView.$el); 
+        //     m_bookView.render(); // lets render the book           
+        // } 
+
+        _.each(this.model.models, this.renderTodos, this);
+
+         return this;
+    },
+    renderTodos:function (option) {
+        $(this.el).append(new OptionView({model:option}).render().el);
+    },
+    initialize: function () {
+        // this.listenTo(this.model, 'all', this.render);
+        this.listenTo(this.model, 'add', this.addOne);
+         // this.listenTo(this.model, 'reset', this.addAll);
+    },
+    addOne: function(option) {
+      var view = new OptionView({model: option});
+      $(this.el).append(view.render().el);
+    },
+    addAll: function() {
+      this.model.each(this.addOne, this);
+    },
+});
+
+
+optionList = new SelectView({ model: options });
+
+for (var i = 0; i < 10; i++) {
+    options.create({title: 'for'+i+i+i,done:true});
+}
+
+
+
+<select id="todoapp">    
+    <option value="3">for000</option>
+    <option value="4">for111</option>
+    <option value="5">for222</option>
+</select>
+
+
+
+window.Wine = Backbone.Model.extend({
+    urlRoot:"../images",
+    defaults:function(){
+        return {
+            "id":test.nextOrder(),
+            "title":""
+        }
+    }
+});
+ 
+
+window.WineCollection = Backbone.Collection.extend({
+    model:Wine,
+    url:"../images",
+    nextOrder: function() {
+      if (!this.length) return 1;
+      return this.last().get('id') + 1;
+    },
+});
+
+var test = new window.WineCollection();
+test.fetch()
+
+test.last().save({title:"12345"})
+
+http://localhost:3000/sqltodos
+http://localhost:3000/About
+
+
+var foo = function() { 
+test.create({title: "testttt" + i,type:"create"});
+console.log(i)
+}
+setInterval(foo,1000);
