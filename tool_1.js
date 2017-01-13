@@ -4878,7 +4878,6 @@ test.destroy({
 
 
 
-
 var Option = Backbone.Model.extend({
     initialize: function () {
         // this.on("invalid",function(model,error){
@@ -5031,3 +5030,398 @@ setInterval(foo,1000);
 
 http://localhost:3000/about_detail/3127
 http://localhost:3000/about_detail
+
+
+
+
+
+
+
+var parentFunc = function (x) {
+    var count = 0;
+    var childFunc = function (y) {
+        count++;
+        // console.log(count);
+        console.log(x + y);
+    }
+    return childFunc;
+}
+
+
+var test = parentFunc(9);
+test(10);
+
+
+var Func = function (a,b,c) {
+    console.log(arguments.length);
+}
+
+var myModule = {
+ 
+  myProperty: "someValue",
+ 
+  // object literals can contain properties and methods.
+  // e.g we can define a further object for module configuration:
+  myConfig: {
+    useCaching: true,
+    language: "en"
+  },
+ 
+  // a very basic method
+  saySomething: function () {
+    console.log( "Where in the world is Paul Irish today?" );
+  },
+ 
+  // output a value based on the current configuration
+  reportMyConfig: function () {
+    console.log( "Caching is: " + ( this.myConfig.useCaching ? "enabled" : "disabled") );
+  },
+ 
+  // override the current configuration
+  updateMyConfig: function( newConfig ) {
+ 
+    if ( typeof newConfig === "object" ) {
+      this.myConfig = newConfig;
+      console.log( this.myConfig.language );
+    }
+  }
+};
+ 
+// Outputs: Where in the world is Paul Irish today?
+myModule.saySomething();
+ 
+// Outputs: Caching is: enabled
+myModule.reportMyConfig();
+ 
+// Outputs: fr
+myModule.updateMyConfig({
+  language: "fr",
+  useCaching: false
+});
+ 
+// Outputs: Caching is: disabled
+myModule.reportMyConfig();
+
+
+
+
+
+
+
+var Module = {
+ 
+  Config: {    
+    language: "tw"
+  },
+ 
+  // a very basic method
+  saySomething: function () {
+    console.log( "Where in the world is Paul Irish today?" );
+  },
+ 
+  // output a value based on the current configuration
+  reportLang: function () {
+    console.log(this.Config.language);
+  },
+ 
+  // override the current configuration
+  updateConfig: function( newConfig ) {
+ 
+    if ( typeof newConfig === "object" ) {
+      this.Config = newConfig;      
+    }
+    console.log( this.Config.language );
+  }
+};
+
+
+var FuncModule = function () {};
+FuncModule.fn = FuncModule.prototype;
+$.extend(FuncModule.fn, Module);
+var module_1 = new FuncModule();
+var module_2 = new FuncModule();
+module_1.updateConfig({language:"en"});
+module_2.updateConfig();
+
+
+
+
+
+
+
+
+
+var counterModule = (function () {
+ 
+  var totalPrice = 0;
+  var basket = [];
+
+    function resetPrice() {      
+        totalPrice = 0;
+    };
+
+    function resetBasket() {
+        basket = [];
+    };
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    };
+  return {
+ 
+    buyItem: function (item,itemPrice) {
+        if(!basket[item]){
+            var prices = [];
+            basket[item] = {count:0,prices:prices};
+        } 
+        basket[item].count += 1;
+        basket[item].prices.push(itemPrice);
+        totalPrice += itemPrice;
+    },
+ 
+
+
+    nextCustomer: function () {
+        resetPrice();
+        resetBasket();
+    },
+    printDetail: function () {
+        for(var key in basket){
+            var prices = basket[key].prices;
+            var printPrices = '';
+            var subTotal = 0;
+            for(var i = 0; i < prices.length; i++){
+                printPrices += numberWithCommas(prices[i]) + '\n';
+                subTotal += prices[i];
+            }
+            console.log(key + ' 數量: ' + basket[key].count + ';\n' + printPrices + '小計: ' + subTotal);            
+        }
+        console.log('總計: ' + totalPrice);
+    },
+    
+
+  };
+ 
+})();
+ 
+counterModule.buyItem('belle',3500)
+counterModule.printDetail()
+
+
+
+var mySingleton = (function () {
+ 
+  // Instance stores a reference to the Singleton
+  var instance;
+ 
+  function init() {
+ 
+    // Singleton
+ 
+    // Private methods and variables
+    function privateMethod(){
+        console.log( "I am private" );
+    }
+ 
+    var privateVariable = "Im also private";
+ 
+    var privateRandomNumber = Math.random();
+ 
+    return {
+ 
+      // Public methods and variables
+      publicMethod: function () {
+        console.log( "The public can see me!" );
+      },
+ 
+      publicProperty: "I am also public",
+ 
+      getRandomNumber: function() {
+        return privateRandomNumber;
+      }
+ 
+    };
+ 
+  };
+ 
+  return {
+ 
+    // Get the Singleton instance if one exists
+    // or create one if it doesn't
+    getInstance: function () {
+ 
+      if ( !instance ) {
+        instance = init();
+      }
+ 
+      return instance;
+    }
+ 
+  };
+ 
+})();
+
+var SingletonTester = (function () {
+ 
+  // options: an object containing configuration options for the singleton
+  // e.g var options = { name: "test", pointX: 5};
+  function Singleton( options ) {
+ 
+    // set options to the options supplied
+    // or an empty object if none are provided
+    options = options || {};
+ 
+    // set some properties for our singleton
+    this.name = "SingletonTester";
+ 
+    this.pointX = options.pointX || 6;
+ 
+    this.pointY = options.pointY || 10;
+ 
+  }
+ 
+  // our instance holder
+  var instance;
+ 
+  // an emulation of static variables and methods
+  var _static = {
+ 
+    name: "SingletonTester",
+ 
+    // Method for getting an instance. It returns
+    // a singleton instance of a singleton object
+    getInstance: function( options ) {
+      if( instance === undefined ) {
+        instance = new Singleton( options );
+      }
+ 
+      return instance;
+ 
+    }
+  };
+ 
+  return _static;
+ 
+})();
+
+
+function recursive(x) {
+    var frob = 1;
+    if(x > 2){
+        frob = recursive(x-1)+recursive(x-2);
+    }
+    return frob;
+}
+recursive(5)
+
+
+
+
+function ObserverList(){
+  this.observerList = [];
+}
+ 
+
+
+ObserverList.fn = ObserverList.prototype ;
+var foos = {
+    add: function ( obj ){
+        return this.observerList.push( obj );
+    },
+    count: function(){
+        return this.observerList.length;
+    },
+    get: function( index ){
+        if( index > -1 && index < this.observerList.length ){
+            return this.observerList[ index ];
+        }
+    },
+    indexOf: function( obj, startIndex ){
+        var i = startIndex;
+ 
+        while( i < this.observerList.length ){
+            if( this.observerList[i] === obj ){
+                return i;
+            }
+            i++;
+        }
+ 
+        return -1;
+    },
+    removeAt: function( index ){
+        this.observerList.splice( index, 1 );
+    }
+}
+ 
+$.extend(ObserverList.fn, foos);
+ 
+var observerList = new ObserverList();
+
+
+
+
+
+var pubsub = {};
+ 
+(function(myObject) {
+ 
+    // Storage for topics that can be broadcast
+    // or listened to
+    var topics = {};
+ 
+    // An topic identifier
+    var subUid = -1;
+ 
+    // Publish or broadcast events of interest
+    // with a specific topic name and arguments
+    // such as the data to pass along
+    myObject.publish = function( topic, args ) {
+ 
+        if ( !topics[topic] ) {
+            return false;
+        }
+ 
+        var subscribers = topics[topic],
+            len = subscribers ? subscribers.length : 0;
+ 
+        while (len--) {
+            subscribers[len].func( topic, args );
+        }
+ 
+        return this;
+    };
+ 
+    // Subscribe to events of interest
+    // with a specific topic name and a
+    // callback function, to be executed
+    // when the topic/event is observed
+    myObject.subscribe = function( topic, func ) {
+ 
+        if (!topics[topic]) {
+            topics[topic] = [];
+        }
+ 
+        var token = ( ++subUid ).toString();
+        topics[topic].push({
+            token: token,
+            func: func
+        });
+        return token;
+    };
+ 
+    // Unsubscribe from a specific
+    // topic, based on a tokenized reference
+    // to the subscription
+    myObject.unsubscribe = function( token ) {
+        for ( var m in topics ) {
+            if ( topics[m] ) {
+                for ( var i = 0, j = topics[m].length; i < j; i++ ) {
+                    if ( topics[m][i].token === token ) {
+                        topics[m].splice( i, 1 );
+                        return token;
+                    }
+                }
+            }
+        }
+        return this;
+    };
+}( pubsub ));
