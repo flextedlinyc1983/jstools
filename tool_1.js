@@ -5490,3 +5490,5 @@ var RatingList = Backbone.Collection.extend({
         })
 var ratingList = new RatingList();
 ratingList.add({contacts: new Backbone.Model({tel:'0911111111',addr:'taipei',email:'ted@gmail'}), users: new Backbone.Model({name:"ted",id:1})});
+
+http://localhost:3000/testrequire
