@@ -5492,3 +5492,11 @@ var ratingList = new RatingList();
 ratingList.add({contacts: new Backbone.Model({tel:'0911111111',addr:'taipei',email:'ted@gmail'}), users: new Backbone.Model({name:"ted",id:1})});
 
 http://localhost:3000/testrequire
+
+
+var db = openDatabase("ratings", "", "Backbone-websql example", 1024*1024); 
+var RatingList = Backbone.Collection.extend({
+    store: new WebSQLStore(db, "tests"),        
+}); 
+var test2 = new RatingList();
+test2.create({testColumn1:'111',testColumn2:'222'})
