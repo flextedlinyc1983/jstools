@@ -5500,3 +5500,211 @@ var RatingList = Backbone.Collection.extend({
 }); 
 var test2 = new RatingList();
 test2.create({testColumn1:'111',testColumn2:'222'})
+
+
+jQuery.ajax({
+    url: 'about_detail',
+//       type: type,
+    dataType: "html",      
+    // Complete callback (responseText is used internally)
+    complete: function( jqXHR, status, responseText ) {
+        // Store the response as specified by the jqXHR object
+        responseText = jqXHR.responseText;
+        console.log(responseText) 
+    }
+});
+
+
+
+(function( $ ) {
+ 
+  var o = $({});
+ 
+  $.subscribe = function() {
+    o.on.apply(o, arguments);
+  };
+ 
+  $.unsubscribe = function() {
+    o.off.apply(o, arguments);
+  };
+ 
+  $.publish = function() {
+    o.trigger.apply(o, arguments);
+  };
+ 
+}( jQuery ));
+
+$.subscribe("/some/topic",function(event,a,b,c){
+    console.log(event.type,arguments[1]+arguments[2]+arguments[3])
+})
+$.publish("/some/topic",["a","b","c"])
+
+
+(function( $ ){
+    $.extend($.fn, {
+        myplugin: function(){
+            // your plugin logic
+        }
+    });
+})( jQuery );
+
+
+
+var myApp = myApp || {};
+myApp.utils = {};
+ 
+(function () {
+  var val = 5;
+ 
+  this.getValue = function () {
+      return val;
+  };
+ 
+  this.setValue = function( newVal ) {
+      val = newVal;
+  }
+ 
+  // also introduce a new sub-namespace
+  this.tools = {};
+ 
+}).apply( myApp.utils );
+ 
+// inject new behaviour into the tools namespace
+// which we defined via the utilities module
+ 
+(function () {
+    this.diagnose = function(){
+        return "diagnosis";
+    }
+}).apply( myApp.utils.tools );
+ 
+// note, this same approach to extension could be applied
+// to a regular IIFE, by just passing in the context as
+// an argument and modifying the context rather than just
+// "this"
+ 
+// Usage:
+ 
+// Outputs our populated namespace
+console.log( myApp );
+ 
+// Outputs: 5
+console.log( myApp.utils.getValue() );
+ 
+// Sets the value of `val` and returns it
+myApp.utils.setValue( 25 );
+console.log( myApp.utils.getValue() );
+ 
+// Testing another level down
+console.log( myApp.utils.tools.diagnose() );
+
+
+
+
+
+
+
+var Participant = function(name) {
+    this.name = name;
+    this.chatroom = null;
+};
+ 
+Participant.prototype = {
+    send: function(message, to) {
+        this.chatroom.send(message, this, to);
+    },
+    receive: function(message, from) {
+        log.add(from.name + " to " + this.name + ": " + message);
+    }
+};
+ 
+var Chatroom = function() {
+    var participants = {};
+ 
+    return {
+ 
+        register: function(participant) {
+            participants[participant.name] = participant;
+            participant.chatroom = this;
+        },
+ 
+        send: function(message, from, to) {
+            if (to) {                      // single message
+                to.receive(message, from);    
+            } else {                       // broadcast message
+                for (key in participants) {   
+                    if (participants[key] !== from) {
+                        participants[key].receive(message, from);
+                    }
+                }
+            }
+        }
+    };
+};
+ 
+// log helper
+ 
+var log = (function() {
+    var log = "";
+ 
+    return {
+        add: function(msg) { log += msg + "\n"; },
+        show: function() { alert(log); log = ""; }
+    }
+})();
+ 
+function run() {
+    var yoko = new Participant("Yoko");
+    var john = new Participant("John");
+    var paul = new Participant("Paul");
+    var ringo = new Participant("Ringo");
+ 
+    var chatroom = new Chatroom();
+    chatroom.register(yoko);
+    chatroom.register(john);
+    chatroom.register(paul);
+    chatroom.register(ringo);
+ 
+    yoko.send("All you need is love.");
+    yoko.send("I love you John.");
+    john.send("Hey, no need to broadcast", yoko);
+    paul.send("Ha, I heard that!");
+    ringo.send("Paul, what do you think?", paul);
+ 
+    log.show();
+}
+
+
+
+
+$(document).ready(function () {
+
+
+    $.fn.tabs = function (control) {
+        var el = $(this);
+        control = $(control);
+
+        el.on('click','li',function () {
+            var tabName = $(this).attr("data-tab");
+            el.trigger("change.tabs",tabName);
+        })
+
+        el.on("change.tabs",function (e,tabName) {
+            el.find('li').removeClass("active");
+            el.find(">[data-tab='" + tabName + "']").addClass('active');
+        })
+        el.on("change.tabs",function (e,tabName) {
+            control.find('>[data-tab]').removeClass("active");
+            control.find(">[data-tab='" + tabName + "']").addClass('active');
+        })
+
+
+        var firstName = el.find('li:first').attr('data-tab');
+        el.trigger("change.tabs",firstName);
+
+        return this;
+    }
+
+    $("ul#tabs").tabs("#tabsContent");
+
+})
