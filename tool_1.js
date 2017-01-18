@@ -5708,3 +5708,909 @@ $(document).ready(function () {
     $("ul#tabs").tabs("#tabsContent");
 
 })
+
+
+
+function Car( options ) {
+ 
+  // some defaults
+  this.doors = options.doors || 4;
+  this.state = options.state || "brand new";
+  this.color = options.color || "silver";
+ 
+}
+ 
+// A constructor for defining new trucks
+function Truck( options){
+ 
+  this.state = options.state || "used";
+  this.wheelSize = options.wheelSize || "large";
+  this.color = options.color || "blue";
+}
+
+var abstractVehicleFactory = (function () {
+ 
+  // Storage for our vehicle types
+  var types = {};
+ 
+  return {
+      getVehicle: function ( type, customizations ) {
+          var Vehicle = types[type];
+ 
+          return (Vehicle ? new Vehicle(customizations) : null);
+      },
+ 
+      registerVehicle: function ( type, Vehicle ) {
+          var proto = Vehicle.prototype;
+ 
+          // only register classes that fulfill the vehicle contract
+          if ( proto.drive && proto.breakDown ) {
+              types[type] = Vehicle;
+          }
+ 
+          return abstractVehicleFactory;
+      },
+
+      getTypes: function () {
+          return types;
+      }
+
+  };
+})();
+ 
+
+// Car.prototype.drive = function () {
+//     console.log('Car drive')
+// }
+// Car.prototype.breakDown = function () {
+//     console.log('Car breakDown')
+// }
+
+var Mixin = function () {};
+ 
+Mixin.prototype = {
+ 
+    driveForward: function () {
+        console.log( "drive forward" );
+    },
+ 
+    driveBackward: function () {
+        console.log( "drive backward" );
+    },
+ 
+    driveSideways: function () {
+        console.log( "drive sideways" );
+    },
+    drive: function () {
+        console.log('drive')
+    },
+    breakDown: function () {
+        console.log('breakDown')
+    }
+ 
+};
+
+function augment( receivingClass, givingClass ) {
+ 
+    // only provide certain methods
+    if ( arguments[2] ) {
+        for ( var i = 2, len = arguments.length; i < len; i++ ) {
+            receivingClass.prototype[arguments[i]] = givingClass.prototype[arguments[i]];
+        }
+    }
+    // provide all methods
+    else {
+        for ( var methodName in givingClass.prototype ) {
+ 
+            // check to make sure the receiving class doesn't
+            // have a method of the same name as the one currently
+            // being processed
+            if ( !Object.hasOwnProperty.call(receivingClass.prototype, methodName) ) {
+                receivingClass.prototype[methodName] = givingClass.prototype[methodName];
+            }
+ 
+            // Alternatively (check prototype chain as well):
+            // if ( !receivingClass.prototype[methodName] ) {
+            // receivingClass.prototype[methodName] = givingClass.prototype[methodName];
+            // }
+        }
+    }
+}
+ 
+ 
+// Augment the Car constructor to include "driveForward" and "driveBackward"
+augment( Car, Mixin, "drive", "breakDown" );
+augment( Truck, Mixin, "drive", "breakDown" );
+ 
+// Create a new Car
+// var myCar = new Car({
+//     model: "Ford Escort",
+//     color: "blue"
+// });
+ 
+// Usage:
+ 
+abstractVehicleFactory.registerVehicle( "car", Car );
+abstractVehicleFactory.registerVehicle( "truck", Truck );
+ 
+// Instantiate a new car based on the abstract vehicle type
+var car = abstractVehicleFactory.getVehicle( "car", {
+            color: "lime green",
+            state: "like new" } );
+ 
+// Instantiate a new truck in a similar manner
+var truck = abstractVehicleFactory.getVehicle( "truck", {
+            wheelSize: "medium",
+            color: "neon yellow" } );
+
+
+
+
+
+
+
+var decoratorApp = decoratorApp || {};
+ 
+// define the objects we're going to use
+decoratorApp = {
+ 
+    defaults: {
+        validate: false,
+        limit: 5,
+        name: "foo",
+        welcome: function () {
+            console.log( "welcome!" );
+        }
+    },
+ 
+    options: {
+        validate: true,
+        name: "bar",
+        helloWorld: function () {
+            console.log( "hello world" );
+        }
+    },
+ 
+    settings: {},
+ 
+    printObj: function ( obj ) {
+        var arr = [],
+            next;
+        $.each( obj, function ( key, val ) {
+            next = key + ": ";
+            next += $.isPlainObject(val) ? printObj( val ) : val;
+            arr.push( next );
+        } );
+ 
+        return "{ " + arr.join(", ") + " }";
+    }
+ 
+};
+
+decoratorApp.settings = $.extend({}, decoratorApp.defaults, decoratorApp.options);
+
+
+
+function Flyweight (make, model, processor) {
+    this.make = make;
+    this.model = model;
+    this.processor = processor;
+};
+ 
+var FlyWeightFactory = (function () {
+    var flyweights = {};
+ 
+    return {
+ 
+        get: function (make, model, processor) {
+            if (!flyweights[make + model]) {
+                flyweights[make + model] = 
+                    new Flyweight(make, model, processor);
+            }
+            return flyweights[make + model];
+        },
+ 
+        getCount: function () {
+            var count = 0;
+            for (var f in flyweights) count++;
+            return count;
+        }
+    }
+})();
+ 
+function ComputerCollection () {
+    var computers = {};
+    var count = 0;
+ 
+    return {
+        add: function (make, model, processor, memory, tag) {
+            computers[tag] = 
+                new Computer(make, model, processor, memory, tag);
+            count++;
+        },
+ 
+        get: function (tag) {
+            return computers[tag];
+        },
+ 
+        getCount: function () {
+            return count;
+        }
+    };
+}
+ 
+var Computer = function (make, model, processor, memory, tag) {
+    this.flyweight = FlyWeightFactory.get(make, model, processor);
+    this.memory = memory;
+    this.tag = tag;
+    this.getMake = function () {
+        return this.flyweight.make;
+    }
+    // ...
+}
+ 
+// log helper
+ 
+var log = (function () {
+    var log = "";
+ 
+    return {
+        add: function (msg) { log += msg + "\n"; },
+        show: function () { alert(log); log = ""; }
+    }
+})();
+ 
+function run() {
+    var computers = new ComputerCollection();
+    
+    computers.add("Dell", "Studio XPS", "Intel", "5G", "Y755P");
+    computers.add("Dell", "Studio XPS", "Intel", "6G", "X997T");
+    computers.add("Dell", "Studio XPS", "Intel", "2G", "U8U80");
+    computers.add("Dell", "Studio XPS", "Intel", "2G", "NT777");
+    computers.add("Dell", "Studio XPS", "Intel", "2G", "0J88A");
+    computers.add("HP", "Envy", "Intel", "4G", "CNU883701");
+    computers.add("HP", "Envy", "Intel", "2G", "TXU003283");
+ 
+    log.add("Computers: " + computers.getCount());
+    log.add("Flyweights: " + FlyWeightFactory.getCount());
+    log.show();
+}
+
+
+
+
+var stateManager = {
+ 
+  fly: function () {
+ 
+    var self = this;
+ 
+    $( "#container" )
+          .unbind()
+          .on( "click", "div.toggle", function ( e ) {
+            self.handleClick( $(e.target) );
+          });
+  },
+ 
+  handleClick: function ( elem ) {
+    elem.find( "span" ).toggle( "slow" );
+  }
+};
+
+
+
+
+
+
+var Book = function(title){
+    this.title  = title;
+}
+
+var Fac = function () {
+  var existingBooks = {}, existingBook;
+ 
+  return {
+    createBook: function ( title, author, genre, pageCount, publisherID, ISBN ) {
+ 
+      // Find out if a particular book meta-data combination has been created before
+      // !! or (bang bang) forces a boolean to be returned
+      existingBook = existingBooks[title];
+      if ( !!existingBook ) {
+        return existingBook;
+      } else {
+ 
+        // if not, let's create a new instance of the book and store it
+        var book = new Book( title, author, genre, pageCount, publisherID, ISBN );
+        existingBooks[title] = book;
+        return book;
+ 
+      }
+    },
+    getExistingBooks:function(){
+        return existingBooks;
+    }
+  };
+ 
+}
+var test1 = Fac();
+test1.createBook('ted');
+test1.getExistingBooks();
+var test2 = Fac();
+test2.createBook('belle');
+test2.getExistingBooks();
+
+
+
+(function( $ ) {
+ 
+  var o = $({});
+ 
+  $.subscribe = function() {
+    o.on.apply(o, arguments);
+  };
+ 
+  $.unsubscribe = function() {
+    o.off.apply(o, arguments);
+  };
+ 
+  $.publish = function() {
+    o.trigger.apply(o, arguments);
+  };
+ 
+}( jQuery ));
+
+$.subscribe("AddToCart",function(event,o,callback){
+    // console.log(event.type,arguments[1]+arguments[2]+arguments[3])
+    // console.log(event.type);
+    // console.log(a);
+    // console.log(b);
+    // console.log(c);
+
+    callback(null,{items:o.item_id});
+})
+
+
+function addItemToCart(userId,itemId) {
+    $.publish("AddToCart",[{user_id:userId,item_id:itemId},function (err, result) {
+        if(!err){
+            console.log(result.items);
+            $.publish("WriteLog",[{level:'debug',message:'This is a test!!',event:'AddToCart',timestamp:getTime()}]);
+        }else{
+            console.log('error');
+        }
+    }]);    
+}
+
+$.subscribe("WriteLog",function(event,o,callback){    
+    console.log('level: ' + o.level + '; message: ' +o.message + '; event: ' + o.event + '; timestamp: ' + o.timestamp);    
+})
+
+function getTime(){
+    var date = new Date();
+    date.setTime(date.getTime());
+    return date;
+}
+
+$.subscribe("Create_User",function(event,o,callback){    
+    o.collection.push(o.user_id);
+});
+
+var collection = [];
+function addUser(userId) {
+    $.publish("Create_User",[{user_id:userId,collection:collection}]);    
+}
+
+
+
+$(document).ready(function () {
+
+
+    $.fn.tabs = function (control) {
+        var el = $(this);
+        control = $(control);
+
+        el.on('click','li',function () {
+            var tabName = $(this).attr("data-tab");
+            el.trigger("change.tabs",tabName);
+        })
+
+        el.on("change.tabs",function (e,tabName) {
+            el.find('li').removeClass("active");
+            el.find(">[data-tab='" + tabName + "']").addClass('active');
+        })
+        el.on("change.tabs",function (e,tabName) {
+            control.find('>[data-tab]').removeClass("active");
+            control.find(">[data-tab='" + tabName + "']").addClass('active');
+        })
+
+
+        var firstName = el.find('li:first').attr('data-tab');
+        el.trigger("change.tabs",firstName);
+
+        return this;
+    }
+
+    $("ul#tabs").tabs("#tabsContent");
+
+})
+
+
+
+
+
+
+
+// old interface
+ 
+function Shipping() {
+    this.request = function(zipStart, zipEnd, weight) {
+        // ...
+        return "$49.75";
+    }
+}
+ 
+// new interface
+ 
+function AdvancedShipping() {
+    this.login = function(credentials) { /* ... */ };
+    this.setStart = function(start) { /* ... */ };
+    this.setDestination = function(destination) { /* ... */ };
+    this.calculate = function(weight) { return "$39.50"; };
+}
+ 
+// adapter interface
+ 
+function ShippingAdapter(credentials) {
+    var shipping = new AdvancedShipping();
+ 
+    shipping.login(credentials);
+ 
+    return {
+        request: function(zipStart, zipEnd, weight) {
+            shipping.setStart(zipStart);
+            shipping.setDestination(zipEnd);
+            return shipping.calculate(weight);
+        }
+    };
+}
+ 
+// log helper
+ 
+var log = (function () {
+    var log = "";
+ 
+    return {
+        add: function (msg) { log += msg + "\n"; },
+        show: function () { alert(log); log = ""; }
+    }
+})();
+ 
+function run() {
+    var shipping = new Shipping();
+    var credentials = {token: "30a8-6ee1"};
+    var adapter = new ShippingAdapter(credentials);
+ 
+    // original shipping object and interface
+ 
+    var cost = shipping.request("78701", "10010", "2 lbs");
+    log.add("Old cost: " + cost);
+ 
+    // new shipping object with adapted interface
+ 
+    cost = adapter.request("78701", "10010", "2 lbs");
+ 
+    log.add("New cost: " + cost);
+    log.show();
+}
+
+
+
+
+
+
+
+// input devices
+ 
+var Gestures = function (output) {
+    this.output = output;
+ 
+    this.tap = function () { this.output.click(); }
+    this.swipe = function () { this.output.move(); }
+    this.pan = function () { this.output.drag(); }
+    this.pinch = function () { this.output.zoom(); }
+};
+ 
+var Mouse = function (output) {
+    this.output = output;
+ 
+    this.click = function () { this.output.click(); }
+    this.move = function () { this.output.move(); }
+    this.down = function () { this.output.drag(); }
+    this.wheel = function () { this.output.zoom(); }
+};
+ 
+// output devices
+ 
+var Screen = function () {
+    this.click = function () { log.add("Screen select"); }
+    this.move = function () { log.add("Screen move"); }
+    this.drag = function () { log.add("Screen drag"); }
+    this.zoom = function () { log.add("Screen zoom in"); }
+};
+ 
+var Audio = function () {
+    this.click = function () { log.add("Sound oink"); }
+    this.move = function () { log.add("Sound waves"); }
+    this.drag = function () { log.add("Sound screetch"); }
+    this.zoom = function () { log.add("Sound volume up"); }
+};
+ 
+// logging helper
+ 
+var log = (function () {
+    var log = "";
+ 
+    return {
+        add: function (msg) { log += msg + "\n"; },
+        show: function () { alert(log); log = ""; }
+    }
+})();
+ 
+function run() {
+ 
+    var screen = new Screen();
+    var audio = new Audio();
+ 
+    var hand = new Gestures(screen);
+    var mouse = new Mouse(audio);
+ 
+    hand.tap();
+    hand.swipe();
+    hand.pinch();
+ 
+    mouse.click();
+    mouse.move();
+    mouse.wheel();
+ 
+    log.show();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var Node = function (name) {
+    this.children = [];
+    this.name = name;
+}
+ 
+Node.prototype = {
+    add: function (child) {
+        this.children.push(child);
+    },
+ 
+    remove: function (child) {
+        var length = this.children.length;
+        for (var i = 0; i < length; i++) {
+            if (this.children[i] === child) {
+                this.children.splice(i, 1);
+                return;
+            }
+        }
+    },
+ 
+    getChild: function (i) {
+        return this.children[i];
+    },
+ 
+    hasChildren: function () {
+        return this.children.length > 0;
+    }
+}
+ 
+// recursively traverse a (sub)tree
+ 
+function traverse(indent, node) {
+    log.add(Array(indent++).join("--") + node.name);
+ 
+    for (var i = 0, len = node.children.length; i < len; i++) {
+        traverse(indent, node.getChild(i));
+    }
+}
+ 
+// logging helper
+ 
+var log = (function () {
+    var log = "";
+ 
+    return {
+        add: function (msg) { log += msg + "\n"; },
+        show: function () { alert(log); log = ""; }
+    }
+})();
+ 
+function run() {
+    var tree = new Node("root");
+    var left = new Node("left")
+    var right = new Node("right");
+    var leftleft = new Node("leftleft");
+    var leftright = new Node("leftright");
+    var rightleft = new Node("rightleft");
+    var rightright = new Node("rightright");
+
+    var leftleftleft = new Node("leftleftleft");
+    var leftleftright = new Node("leftleftright");
+ 
+    tree.add(left);
+    tree.add(right);
+    tree.remove(right);  // note: remove
+    tree.add(right);
+ 
+    left.add(leftleft);
+    left.add(leftright);
+ 
+    right.add(rightleft);
+    right.add(rightright);
+
+    leftleft.add(leftleftleft);
+    leftleft.add(leftleftright);
+ 
+    traverse(1, tree);
+ 
+    log.show();
+}
+
+
+
+var Mortgage = function(name) {
+    this.name = name;
+}
+ 
+Mortgage.prototype = {
+ 
+    applyFor: function(amount) {
+        // access multiple subsystems...
+        var result = "approved";
+        if (!new Bank().verify(this.name, amount)) {
+            result = "denied";
+        } else if (!new Credit().get(this.name)) {
+            result = "denied";
+        } else if (!new Background().check(this.name)) {
+            result = "denied";
+        }
+        return this.name + " has been " + result +
+               " for a " + amount + " mortgage";
+    }
+}
+ 
+var Bank = function() {
+    this.verify = function(name, amount) {
+        // complex logic ...
+        return true;
+    }
+}
+ 
+var Credit = function() {
+    this.get = function(name) {
+        // complex logic ...
+        return true;
+    }
+}
+ 
+var Background = function() {
+    this.check = function(name) {
+        // complex logic ...
+        return true;
+    }
+}
+ 
+function run() {
+    var mortgage = new Mortgage("Joan Templeton");
+    var result = mortgage.applyFor("$100,000");
+ 
+    alert(result);
+}
+ 
+
+
+
+
+
+function GeoCoder() {
+ 
+    this.getLatLng = function(address) {
+        
+        if (address === "Amsterdam") {
+            return "52.3700° N, 4.8900° E";
+        } else if (address === "London") {
+            return "51.5171° N, 0.1062° W";
+        } else if (address === "Paris") {
+            return "48.8742° N, 2.3470° E";
+        } else if (address === "Berlin") {
+            return "52.5233° N, 13.4127° E";
+        } else {
+            return "";
+        }
+    };
+}
+ 
+function GeoProxy() {
+    var geocoder = new GeoCoder();
+    var geocache = {};
+ 
+    return {
+        getLatLng: function(address) {
+            if (!geocache[address]) {
+                geocache[address] = geocoder.getLatLng(address);
+            }
+            log.add(address + ": " + geocache[address]);
+            return geocache[address];
+        },
+        getCount: function() {
+            var count = 0;
+            for (var code in geocache) { count++; }
+            return count;
+        }
+    };
+};
+ 
+// log helper
+ 
+var log = (function() {
+    var log = "";
+ 
+    return {
+        add: function(msg) { log += msg + "\n"; },
+        show: function() { alert(log); log = ""; }
+    }
+})();
+ 
+function run() {
+    var geo = new GeoProxy();
+ 
+    // geolocation requests
+ 
+    geo.getLatLng("Paris");
+    geo.getLatLng("London");
+    geo.getLatLng("London");
+    geo.getLatLng("London");
+    geo.getLatLng("London");
+    geo.getLatLng("Amsterdam");
+    geo.getLatLng("Amsterdam");
+    geo.getLatLng("Amsterdam");
+    geo.getLatLng("Amsterdam");
+    geo.getLatLng("London");
+    geo.getLatLng("London");
+ 
+    log.add("\nCache size: " + geo.getCount());
+    log.show();
+}
+
+
+
+
+
+
+var Shipping = function() {
+    this.company = "";
+};
+ 
+Shipping.prototype = {
+    setStrategy: function(company) {
+        this.company = company;
+    },
+ 
+    calculate: function(package) {
+        return this.company.calculate(package);
+    }
+};
+ 
+var UPS = function() {
+    this.calculate = function(package) {
+        // calculations...
+        return "$45.95";
+    }
+};
+ 
+var USPS = function() {
+    this.calculate = function(package) {
+        // calculations...
+        return "$39.40";
+    }
+};
+ 
+var Fedex = function() {
+    this.calculate = function(package) {
+        // calculations...
+        return "$43.20";
+    }
+};
+ 
+// log helper
+ 
+var log = (function() {
+    var log = "";
+ 
+    return {
+        add: function(msg) { log += msg + "\n"; },
+        show: function() { alert(log); log = ""; }
+    }
+})();
+ 
+function run() {
+    var package = { from: "76712", to: "10012", weigth: "lkg" };
+ 
+    // the 3 strategies
+ 
+    var ups = new UPS();
+    var usps = new USPS();
+    var fedex = new Fedex();
+ 
+    var shipping = new Shipping();
+ 
+    shipping.setStrategy(ups);
+    log.add("UPS Strategy: " + shipping.calculate(package));
+    shipping.setStrategy(usps);
+    log.add("USPS Strategy: " + shipping.calculate(package));
+    shipping.setStrategy(fedex);
+    log.add("Fedex Strategy: " + shipping.calculate(package));
+ 
+    log.show();
+}
+
+
+$('.someCheckbox').click(function(){
+
+ if (this.checked)
+ {
+ $('#input_carModel').val(activeSettings.carModel);
+ $('#input_carYear').val(activeSettings.carYear);
+ $('#input_carMiles').val(activeSettings.carMiles);
+ $('#carTint').val(activeSettings.carTint);
+ } else {
+
+ $('#input_carModel').val('');
+ $('#input_carYear').val('');
+ $('#input_carMiles').val('');
+ $('#input_carTint').val('');
+ }
+});
+
+
+
+var defaultSettings = {};
+defaultSettings['carModel'] = 'Mercedes';
+defaultSettings['carYear'] = 2010;
+defaultSettings['carMiles'] = 5000;
+defaultSettings['carTint'] = 'Metallic Blue';
+
+ $('.someCheckbox').click(function(){
+ var checked = this.checked;
+ /*
+ What are we repeating?
+ 1. input_ precedes each field name
+ 2. accessing the same array for settings
+ 3. repeating value resets
+
+ What can we do?
+ 1. programmatically generate the field names
+ 2. access array by key
+ 3. merge this call using terse coding (ie. if
+checked,
+ set a value, otherwise don't)
+ */
+ $.each(['carModel', 'carYear', 'carMiles','carTint'], function(i,key){
+ $('#input_' + v).val(checked ? defaultSettings[key] : '');
+ });
+});
