@@ -7381,3 +7381,43 @@ pubsub.trigger('some:channel', 'Dude...');
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
+
+var Book = Backbone.Model.extend({
+    defaults: {
+        _id: "",
+        path: "",
+        name:"",
+    },
+    idAttribute: "_id",
+   
+    
+});
+
+
+var BooksCollection = Backbone.Collection.extend({
+    model: Book,
+    url:'/api/test123',
+    parse: function(response){
+        return response.photos;
+    }
+});
+
+var bookCollection = new BooksCollection()
+bookCollection.fetch()
+
+
+
+var obj = bookCollection.where({_id:"587d9d26a1c73225b4291483"})[0];
+obj.save({path:'/ted2'}, {
+    wait:true,
+    success:function(model, response) {
+        console.log('Successfully saved!');
+    },
+    error: function(model, error) {     
+        console.log('error.responseText');
+    }})
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
