@@ -7421,3 +7421,52 @@ obj.save({path:'/ted2'}, {
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
+
+
+var BookView = Backbone.View.extend({
+  template: _.template($("#template-book").html()),
+
+  render: function() {
+    // This is a dictionary object of the attributes of the models.
+    // => { name: "Jason", email: "j.smith@gmail.com" }
+    var dict = this.model.toJSON();
+
+    // Pass this object onto the template function.
+    // This returns an HTML string.
+    var html = this.template(dict);
+
+    // Append the result to the view's element.
+    $(this.el).append(html);
+
+    // ...
+  },
+  el: $('#book'),
+  initialize : function(){
+        this.listenTo(this.model, 'change:path', this.showChangedPath);
+    },
+    showChangedPath : function(){
+        console.log('showChangedPath');
+        // we are using the same main view template here though 
+        // another subtemplate for only the address part can 
+        // anyway be used here
+        var html = this.template(this.model.toJSON());
+
+        $(this.el).html(html);
+    }
+});
+
+var bookView = new BookView({model:bookCollection.where({_id:"587d9d26a1c73225b4291483"})[0]});
+
+bookView.render();
+
+
+var callback = {
+    wait:true,
+    success:function(model, response) {
+        console.log('Successfully saved!');
+    },
+    error: function(model, error) {     
+        console.log('error.responseText');
+    }}
+obj.save({path:'/ted1010'}, callback)
+
