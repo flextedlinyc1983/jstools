@@ -6614,3 +6614,770 @@ checked,
  $('#input_' + v).val(checked ? defaultSettings[key] : '');
  });
 });
+
+
+
+
+
+var MyApp;
+(function (MyApp) {
+    var Customer = function () {
+        function Customer(name) {
+            this.name = name;
+        }
+        Customer.prototype.hello = function () {
+            alert("I am " + this.name);
+        }
+        return Customer;
+    }();
+    MyApp.Customer = Customer;
+})(MyApp || (MyApp = {}));
+
+var kelly = new MyApp.Customer("ted");
+
+
+class Person {
+    constructor(public name)
+}
+
+class Employee extends Person{
+    constructor(name,public salary){
+        super(name);
+    }
+    show(){
+        alert('I make' + this.salary)
+    }
+}
+
+
+
+
+
+
+
+
+
+var MyApp;
+(function (MyApp) {
+    var Customer = function () {
+        function Customer(name) {
+            this.name = name;
+        }
+        Customer.prototype.hello = function () {
+            alert("I am " + this.name);
+        }
+        return Customer;
+    }();
+    MyApp.Customer = Customer;
+
+
+
+    var ExtraSalary = function () {
+        function ExtraSalary() {            
+        }
+        ExtraSalary.prototype.visit = function (emp) {
+            emp.setSalary(emp.getSalary() * 1.1);
+        }
+        return ExtraSalary;
+    }();
+    MyApp.ExtraSalary = ExtraSalary;
+
+
+
+})(MyApp || (MyApp = {}));
+
+
+var Employee = function (name, salary, vacation) {
+    var self = this;
+        
+    this.accept = function (visitor) {
+        visitor.visit(self);
+    };
+ 
+    this.getName = function () {
+        return name;
+    };
+ 
+    this.getSalary = function () {
+        return salary;
+    };
+ 
+    this.setSalary = function (sal) {
+        salary = sal;
+    };
+ 
+    this.getVacation = function () {
+        return vacation;
+    };
+ 
+    this.setVacation = function (vac) {
+        vacation = vac;
+    };
+};
+ 
+
+ 
+var ExtraVacation = function () {
+    this.visit = function (emp) {
+        emp.setVacation(emp.getVacation() + 2);
+    };
+};
+ 
+// log helper
+ 
+var log = (function() {
+    var log = "";
+ 
+    return {
+        add: function(msg) { log += msg + "\n"; },
+        show: function() { alert(log); log = ""; }
+    }
+})();
+ 
+function run() {
+        
+    var employees = [
+        new Employee("John", 10000, 10),
+        new Employee("Mary", 20000, 21),
+        new Employee("Boss", 250000, 51)
+    ];
+ 
+    // var visitorSalary = new ExtraSalary();
+    var visitorSalary = new MyApp.ExtraSalary();
+    var visitorVacation = new ExtraVacation();
+        
+    for (var i = 0, len = employees.length; i < len; i++) {
+        var emp = employees[i];
+            
+        emp.accept(visitorSalary);
+        emp.accept(visitorVacation);
+        log.add(emp.getName() + ": $" + emp.getSalary() +
+            " and " + emp.getVacation() + " vacation days");
+    }
+ 
+    log.show();
+}
+
+
+
+
+
+// The constructor to decorate
+function MacBook() {
+ 
+  this.cost = function () { return 997; };
+  this.screenSize = function () { return 11.6; };
+ 
+}
+ 
+// Decorator 1
+function memory( macbook ) {
+ 
+  var v = macbook.cost();
+  macbook.cost = function() {
+    return v + 75;
+  };
+ 
+}
+ 
+// Decorator 2
+function engraving( macbook ){
+ 
+  var v = macbook.cost();
+  macbook.cost = function(){
+    return v + 200;
+  };
+ 
+}
+ 
+// Decorator 3
+function insurance( macbook ){
+ 
+  var v = macbook.cost();
+  macbook.cost = function(){
+     return v + 250;
+  };
+ 
+}
+ 
+var mb = new MacBook();
+memory( mb );
+engraving( mb );
+insurance( mb );
+ 
+// Outputs: 1522
+console.log( mb.cost() );
+ 
+// Outputs: 11.6
+console.log( mb.screenSize() );
+
+
+
+
+
+
+
+
+var PhotoRouter = Backbone.Router.extend({
+  routes: { "photos/:id": "route" },
+ 
+  route: function( id ) {
+    var item = photoCollection.get( id );
+    var view = new PhotoView( { model: item } );
+ 
+    $('.content').html( view.render().el );
+  }
+});
+
+
+var PhotoView = Backbone.View.extend({
+ 
+    //... is a list tag.
+    tagName: "li",
+ 
+    // Pass the contents of the photo template through a templating
+    // function, cache it for a single photo
+    template: _.template( $("#photo-template").html() ),
+ 
+    // The DOM events specific to an item.
+    events: {
+      "click img": "toggleViewed"
+    },
+ 
+    // The PhotoView listens for changes to
+    // its model, re-rendering. Since there's
+    // a one-to-one correspondence between a
+    // **Photo** and a **PhotoView** in this
+    // app, we set a direct reference on the model for convenience.
+ 
+    initialize: function() {
+      this.model.on( "change", this.render, this );
+      this.model.on( "destroy", this.remove, this );
+    },
+ 
+    // Re-render the photo entry
+    render: function() {
+      $( this.el ).html( this.template(this.model.toJSON() ));
+      return this;
+    },
+ 
+    // Toggle the `"viewed"` state of the model.
+    toggleViewed: function() {
+      this.model.viewed();
+    }
+ 
+});
+
+
+
+$.get( url, data, callback, dataType );
+$.post( url, data, callback, dataType );
+$.getJSON( url, data, callback );
+$.getScript( url, callback );
+
+
+// $.get()
+$.ajax({
+  url: url,
+  data: data,
+  dataType: dataType
+}).done( callback );
+ 
+// $.post
+$.ajax({
+  type: "POST",
+  url: url,
+  data: data,
+  dataType: dataType
+}).done( callback );
+ 
+// $.getJSON()
+$.ajax({
+  url: url,
+  dataType: "json",
+  data: data,
+}).done( callback );
+ 
+// $.getScript()
+$.ajax({
+  url: url,
+  dataType: "script",
+}).done( callback );
+
+
+
+var callback = function (jqXHR) {
+    responseText = jqXHR.responseText;
+    console.log(responseText);
+}
+$.get( '/sqltodos', 'json', callback, 'json' );
+
+$.get( "/sqltodos", function( data ) {
+  console.log(data);
+}, "json" );
+
+
+
+$( "input" ).attr({ "type": "text", "id":"sample"})
+
+
+
+(function( $ ){
+  $.fn.myPluginName = function () {
+    // our plugin logic
+  };
+})( jQuery );
+
+
+(function( $ ){
+    $.extend($.fn, {
+        myplugin: function(){
+            // your plugin logic
+        }
+    });
+})( jQuery );
+
+
+
+
+CONFIG = {initial:'ted'}
+$.fn.plugin = function(CONFIG){
+     CONFIG = $.extend({
+         content: 'Hello world!'
+     }, CONFIG);
+     console.log(CONFIG);
+}
+$('input').plugin(CONFIG)
+
+
+
+
+
+
+
+
+
+var Book = function ( title, author, genre, pageCount, publisherID, ISBN ) {
+ 
+    this.title = title;
+    this.author = author;
+    this.genre = genre;
+    this.pageCount = pageCount;
+    this.publisherID = publisherID;
+    this.ISBN = ISBN;
+ 
+};
+
+
+
+// Book Factory singleton
+var bookFactory = (function () {
+  var existingBooks = {}, existingBook;
+ 
+  return {
+    createBook: function ( title, author, genre, pageCount, publisherID, ISBN ) {
+ 
+      // Find out if a particular book meta-data combination has been created before
+      // !! or (bang bang) forces a boolean to be returned
+      existingBook = existingBooks[ISBN];
+      if ( !!existingBook ) {
+        return existingBook;
+      } else {
+ 
+        // if not, let's create a new instance of the book and store it
+        var book = new Book( title, author, genre, pageCount, publisherID, ISBN );
+        existingBooks[ISBN] = book;
+        return book;
+ 
+      }
+    }
+  };
+ 
+})();
+
+var BookRecordManager = (function () {
+ 
+  var bookRecordDatabase = {};
+ 
+  return {
+    // add a new book into the library system
+    addBookRecord: function ( id, title, author, genre, pageCount, publisherID, ISBN, checkoutDate, checkoutMember, dueReturnDate, availability ) {
+ 
+      var book = bookFactory.createBook( title, author, genre, pageCount, publisherID, ISBN );
+ 
+      bookRecordDatabase[id] = {
+        checkoutMember: checkoutMember,
+        checkoutDate: checkoutDate,
+        dueReturnDate: dueReturnDate,
+        availability: availability,
+        book: book
+      };
+    },
+    updateCheckoutStatus: function ( bookID, newStatus, checkoutDate, checkoutMember, newReturnDate ) {
+ 
+      var record = bookRecordDatabase[bookID];
+      record.availability = newStatus;
+      record.checkoutDate = checkoutDate;
+      record.checkoutMember = checkoutMember;
+      record.dueReturnDate = newReturnDate;
+    },
+ 
+    extendCheckoutPeriod: function ( bookID, newReturnDate ) {
+      bookRecordDatabase[bookID].dueReturnDate = newReturnDate;
+    },
+ 
+    isPastDue: function ( bookID ) {
+      var currentDate = new Date();
+      return currentDate.getTime() > Date.parse( bookRecordDatabase[bookID].dueReturnDate );
+    }
+  };
+ 
+})();
+
+
+Date.parse( '2017/01/17 13:52' )
+
+
+
+
+var Photo = Backbone.Model.extend({
+ 
+    // Default attributes for the photo
+    defaults: {
+      src: "placeholder.jpg",
+      caption: "A default image",
+      viewed: false
+    },
+ 
+    // Ensure that each photo created has an `src`.
+    initialize: function() {
+       this.set( { "src": this.defaults.src} );
+    }
+ 
+});
+
+
+
+
+
+
+
+var Photo = Backbone.Model.extend({
+ 
+    // Default attributes for the photo
+    defaults: {
+      src: "placeholder.jpg",
+      caption: "A default image",
+      viewed: false
+    },
+ 
+    // Ensure that each photo created has an `src`.
+    initialize: function() {
+        console.log(this.defaults.src)
+        this.set( { "src": "test"} );
+        this.set( { "src": this.defaults.src} );
+    }
+ 
+});
+var test = new Photo({src:"123"});
+test.toJSON();
+
+
+
+
+
+
+
+
+
+var AppCollection;
+(function (AppCollection) {
+    var Customer = function () {
+        function Customer(name) {
+            this.name = name;
+        }
+        Customer.prototype.hello = function () {
+            alert("I am " + this.name);
+        }
+        return Customer;
+    }();
+    MyApp.Customer = Customer;
+
+
+    var Photos = Backbone.Collection.extend({
+    });
+
+    AppCollection.Photos = Photos;
+
+
+})(AppCollection || (AppCollection = {}));
+
+var App = {};
+App.photos = new AppCollection.Photos([
+        { id: 1, name: "My dog", filename: "IMG_0392.jpg" },
+        { id: 2, name: "Our house", filename: "IMG_0393.jpg" },
+        { id: 3, name: "My favorite food", filename: "IMG_0394.jpg" },                
+]);
+
+$.each(App.photos.toJSON(),function(index,val){
+    console.log(val);
+})
+App.photos.get(1).toJSON();
+
+
+var photo = App.photos.select(function(photo) {
+  return photo.get('filename').match(/^IMG/);
+});
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+// var ContactModel = Backbone.Model.extend({
+//     defaults: {
+//         name:'',
+//         email:''
+//    },
+// })
+
+// var contactModel = new ContactModel({name:"ted",email:"ted@flaps.com.tw"})
+
+var contactModel = new Backbone.Model({name:"ted",email:"ted@flaps.com.tw"})
+var ContactView = Backbone.View.extend({
+  template: _.template($("#template-contact").html()),
+
+  render: function() {
+    // This is a dictionary object of the attributes of the models.
+    // => { name: "Jason", email: "j.smith@gmail.com" }
+    var dict = this.model.toJSON();
+
+    // Pass this object onto the template function.
+    // This returns an HTML string.
+    var html = this.template(dict);
+
+    // Append the result to the view's element.
+    $(this.el).append(html);
+
+    // ...
+  },
+  el: $('#contact'),
+  initialize : function(){
+        this.listenTo(this.model, 'change:name', this.showChangedName);
+    },
+    showChangedName : function(){
+        // we are using the same main view template here though 
+        // another subtemplate for only the address part can 
+        // anyway be used here
+        var html = this.template(this.model.toJSON());
+
+        $(this.el).html(html);
+    }
+});
+
+var contactView = new ContactView({model:contactModel});
+contactView.render();
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+
+
+App = {};
+
+App.Views = {};
+App.Mixins = {};
+App.Views.Menu = Backbone.View.extend({
+  // I need to know how to toggle, open, and close!
+    toggle: function() { console.log('Menu') },  
+});
+
+
+App.Mixins.Navigation = {
+
+  toggle: function() { console.log('Navigation') },
+
+  open: function() { console.log('open Navigation') },
+
+  close: function() { /* ... */ }
+
+};
+
+
+_.extend(App.Views.Menu.prototype, App.Mixins.Navigation);
+
+App.Views.Tabs = Backbone.View.extend({
+  // I too need to know how to toggle, open, and close!
+});
+
+_.extend(App.Views.Tabs.prototype, App.Mixins.Navigation);
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+var Person = Backbone.Model.extend({
+   defaults: {
+        'name': 'John Doe',
+        'address': {
+            'street': '1st Street',
+            'city': 'Austin',
+            'state': 'TX',
+            'zipCode': 78701
+        },
+        'a':1,
+        'b':2,        
+        'c':3,        
+   },
+   validate: function(attributes) {
+        console.log('validate');
+        // if(isNaN(attributes.address.zipCode)) return "Address ZIP code must be a number!";
+
+        var errors = [];
+
+        if(attributes.a < 0) {
+            errors.push({
+                'message': 'Form field a is messed up!',
+                'class': 'a'
+            });
+        }
+        if(attributes.b < 0) {
+            errors.push({
+                'message': 'Form field b is messed up!',
+                'class': 'b'
+            });
+        }
+        
+        if(attributes.c < 0) {
+            // this.trigger('invalid:a', 'Form field a is messed up!', this);
+            this.trigger('invalid:c', 'Form field c is messed up!');
+        }
+
+        if(errors.length) {
+            return errors;
+        }
+    },
+    initialize: function() {
+        console.log('initialize');
+        // this.set( { "src": this.defaults.src} );
+        this.on('invalid:c', function(error) {            
+            console.log(error);
+        });
+    }
+
+});
+
+var person = new Person();
+person.set('name', 'ted', { validate: true });
+person.set({'name': 'ted',a:10}, { validate: true });
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+var address = $.extend(true, {}, person.get('address'));
+
+
+
+var Hotel = Backbone.Model.extend({
+    defaults: {
+        "availableRooms": ["a"],
+        "rooms": {
+            "a": {
+                "size": 1200,
+                "bed": "queen"
+            },
+            "b": {
+                "size": 900,
+                "bed": "twin"
+            },
+            "c": {
+                "size": 1100,
+                "bed": "twin"
+            }
+        },
+
+        getRooms: function() {
+            var rooms = $.extend(true, {}, this.get("rooms")),
+             newRooms = {};
+
+            // transform rooms from an array back into an object
+            _.each(rooms, function(room) {
+                newRooms[room.name] = {
+                    "size": room.size,
+                    "bed": room.bed
+                }
+            });
+        },
+
+        getRoomsByBed: function(bed) {
+            return _.where(this.getRooms(), { "bed": bed });
+        }
+    }
+});
+
+
+
+
+var View = Backbone.View.extend({
+    initialize: function(options) {
+        this.model.on('change', this.render, this);
+    },
+
+    template: _.template($('#template').html()),
+
+    render: function() {
+        this.$el.html(template(this.model.toJSON());
+        $('#a', this.$el).html(this.model.get(‘a’));
+        $('#b', this.$el).html(this.model.get(‘b’));
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+
+var AlertView = Backbone.View.extend({
+    set: function(typeOfError, message) {
+        var alert = $('.in-page-alert').length ? $('.in-page-alert'): $('.body-alert');
+        alert
+            .removeClass('error success warning')
+            .addClass(typeOfError)
+            .html(message)
+            .fadeIn()
+            .delay(5000)
+            .fadeOut();
+    }
+});
+
+var alert = new AlertView();
+alert.set('TYPE-OF-ERROR', 'error');
+
+
+this.model.on('error', function(model, error) {
+    alert.set('TYPE-OF-ERROR', error);
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+
+
+var pubsub = _.extend({}, Backbone.Events);
+pubsub.on('some:channel', function () {
+    console.log('channel ', arguments);
+    pubsub.off('some:channel');
+});
+pubsub.trigger('some:channel', 'Dude...');
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
