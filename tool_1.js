@@ -7468,8 +7468,18 @@ var callback = {
     error: function(model, error) {     
         console.log('error.responseText');
     }}
-obj.save({path:'/ted1010'}, callback)
+// obj.save({path:'/ted1010'}, callback)
+obj.save({path:'/ted7',token:'abc'}, callback)
 
+
+obj.destroy({_id:obj.get('_id')},{
+    wait:true,
+    success:function(model, response) {
+        console.log('Successfully saved!');
+    },
+    error: function(model, error) {     
+        console.log('error.responseText');
+    }})
 ///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
@@ -7479,3 +7489,5 @@ node --debug meadowlark.js
 
 ///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
+
+
