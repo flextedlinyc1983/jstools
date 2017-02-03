@@ -7512,3 +7512,45 @@ sudo npm install -g node-inspector
 
 ///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
+  $('[data-role=content]').attr({'id': 'panel'});
+    $('.js-slideout-toggle').on('vclick', function() {
+        slideout.toggle();
+    //alert('test')
+    });
+    
+    slideout = new Slideout({
+      'panel': document.getElementById('panel'),
+      'menu': document.getElementById('menu'),
+      'padding': 256,
+      'tolerance': 70
+    });
+    slideout.on('translatestart', function() {
+      console.log('Start');
+    });
+
+    slideout.on('translate', function(translated) {
+      console.log('Translate: ' + translated); // 120 in px
+      gtranslated = translated;
+    });
+
+    slideout.on('translateend', function(translated) {
+      console.log('End');
+      if(gtranslated > 128){
+      return false;
+      }
+
+    });
+
+    slideout.on('close', function() { 
+      console.log('close');
+    });
+    slideout.on('beforeclose', function() { 
+      console.log('beforeclose');
+      return false;
+    });
+
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
+http://localhost:3000/test_bootstrap
+
