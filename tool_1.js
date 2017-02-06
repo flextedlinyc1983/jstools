@@ -7554,3 +7554,193 @@ sudo npm install -g node-inspector
 
 http://localhost:3000/test_bootstrap
 
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
+
+function gcd(x,y){
+  var g = y;
+  while ( x > 0){
+    g = x;
+    x = y % x;
+    y = g;
+  }
+  return g;
+}
+
+
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
+function getParent(el, pTagName) {
+  if (el == null) return null;
+  else if (el.nodeType == 1 && el.tagName.toLowerCase() == pTagName.toLowerCase())  // Gecko bug, supposed to be uppercase
+    return el;
+  else
+    return getParent(el.parentNode, pTagName);
+}
+
+
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
+target = $('#content');
+top = target.offset().top;
+  $('html, body').stop().animate({
+    scrollTop: 1150
+  }, 1000, 'swing');    
+
+
+jQuery.preloadImages = function() {
+    for(var i = 0; i<arguments.length; i++) {
+        jQuery("<img>").attr("src", arguments[i]);
+    }
+}
+$.preloadImages('http://www.starbucks.com.tw/objects/images/menu_07_kv_161021.png')
+
+
+
+
+
+var screenWidth;
+
+$(function(){
+  updateScreenWidth();
+
+  $('.search_bar').hide();
+  //手機版收納選單
+  $('.hamburger').click(function(){
+    $(this).toggleClass("open");
+    $(".nav").slideToggle(500);
+  });
+
+  //手機版搜尋
+  $('.search').click(function(){
+    if(screenWidth <= 960) $('.search_bar').toggle(500);
+  });
+
+  //手機版 footer
+  $('.info_block span').click(function(){
+    if($(this).attr("class") == "open"){
+      $(this).removeClass("open");
+      $(this).parent().find("ol").stop().slideUp(500);
+    }else{
+      $('.info_block span').removeClass("open");
+      $(".info_block ol").stop().slideUp(500);
+      $(this).addClass("open");
+      $(this).parent().find("ol").stop().slideDown(500);
+    }
+  });
+  
+  //選單下拉
+  $('#nav .nav > li').mouseenter(function() {
+    if(screenWidth > 960){
+      $(this).find(".subMenus").stop().show();
+      $(this).find("a").addClass("on");
+    }
+  }).mouseleave(function() {
+    if(screenWidth > 960){
+      $(this).find(".subMenus").stop().hide();
+      $(this).find("a").removeClass("on");
+    }
+  });
+})
+
+$(window).resize(function() {
+  updateScreenWidth();
+});
+
+function updateScreenWidth(){
+  if (typeof window.innerWidth != 'undefined'){   
+    screenWidth = window.innerWidth;
+  
+  }else if (typeof document.documentElement != 'undefined' && typeof document.documentElement.clientWidth !='undefined' && document.documentElement.clientWidth != 0){
+    // IE6 in standards compliant mode (i.e. with a valid doctype as the first line in the document)
+    screenWidth = document.documentElement.clientWidth;
+  }else {    
+    // older versions of IE  
+    screenWidth = document.getElementsByTagName('body')[0].clientWidth;
+  } 
+
+  $(".subMenus").css("width", parseInt(screenWidth) + "px");
+  if(screenWidth > 1400){
+    $(".subMenus").css("left",parseInt(-(screenWidth-1320)/2) + "px");
+    $(".subMenus > ul:first-of-type").css("padding-left", parseInt(20 +(screenWidth-1360)/2) + "px");
+  }else{
+    $(".subMenus").css("left","-20px");
+    $(".subMenus > ul:first-of-type").css("padding-left", "40px");
+  }
+  
+  if(screenWidth > 960){
+    $(".nav").show();
+    $('.search_bar').hide();
+    $("#nav").css("width", "");
+  }else{
+    $("#nav").css("width", (screenWidth-20) + "px");
+  }
+}
+
+//讓影片不會檔住浮動選單
+$(function(){
+     $("iframe").each(function(){
+      var ifr_source = $(this).attr('src');
+      var wmode = "&wmode=opaque";
+      $(this).attr('src',ifr_source+wmode);
+     });
+});
+
+
+IP位址
+Cookies
+語言
+時區
+HTTP 頭（用戶代理, 參考頁等）
+HTML5 APIs（WebRTC, Battery API等）
+HTML5 和 CSS3 特徵檢測
+CSS 媒體查詢
+WebGL
+瀏覽器插件（Flash, Silverlight, Java等）
+瀏覽器加載項
+瀏覽器選項（阻止瀏覽器追蹤等）
+瀏覽器存儲
+系統字體
+TLS/SSL 會話ID
+硬體檢測（攝像頭，麥克風，觸摸屏等）
+螢幕（解析度，色彩深度，像素等）
+音視頻編解碼器
+裝配特徵
+
+原文網址：https://read01.com/0ex2L.html
+
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+<div class="clearfix">
+   <div class="float-left"> </div>
+   <p> blah </p>
+</div>
+
+.clearfix:before, .clearfix:after { 
+   content: "";
+   display: table; 
+}
+.clearfix:after {
+   clear: both; 
+}
+.clearfix { 
+   zoom: 1; /* IE6&7 */ 
+}
+
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+
+/* font: 12px/80px Helvetica; */
+
+font-weight: 400;
+line-height: 6.5em;
+
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+http://localhost:3000/test_rwd
