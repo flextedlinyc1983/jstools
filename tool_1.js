@@ -7744,3 +7744,263 @@ line-height: 6.5em;
 //////////////////////////////////////////////////////////////////////
 
 http://localhost:3000/test_rwd
+
+typeof window !== "undefiend" ? window : this
+
+
+//    function constructor
+var Person = function(firstname, lastname){
+    this.firstname = firstname;
+    this.lastname = lastname;
+}
+
+//    function constructor的prototype
+Person.prototype.getFullName = function(){
+    return this.firstname + " " + this.lastname;
+}
+
+//    根據function constructor所建立的物件Customer1
+var Customer1 = new Person ("John", "Doe");
+
+//    透過for...in輸出
+for(var prop in Customer1){
+         
+    console.log(prop + ': ' + Customer1[prop]);
+     
+}
+
+//    透過for...in輸出
+for(var prop in Customer1){
+  if(Customer1.hasOwnProperty(prop)){
+    console.log(prop + ': ' + Customer1[prop]);
+  }
+}     
+
+
+var arr = ['John', 'Jane', 'Jim'];
+for (var i = 0; i < arr.length ; i++){
+    console.log( i + ": " + arr[i]);
+}
+
+
+
+
+var person = {
+ firstname: 'Jeremy',
+ lastname: 'Lin',
+ getFullName: function(){
+  
+  var fullname = this.firstname + ' ' + this.lastname;
+  return fullname;
+
+ }
+}
+
+
+var logName = function(location1,location2){
+
+ console.log('Logged: ' + this.getFullName());
+ // console.log('Arguments: ' + location1 + ' ' + location2);
+
+};
+
+
+var logPersonName = logName.bind(person);
+logPersonName();
+
+logName.call(person)
+
+
+(function(location1,location2){
+
+ console.log('Logged: ' + this.getFullName());
+ console.log('Arguments: ' + location1 + ' ' + location2);
+
+}).apply(person,['ted1','ted2'])
+
+
+function  xAddy(x) {
+  return function (y) {
+    return (x + y);
+  }
+}
+
+var test = xAddy(10);
+var test2 = test(123);
+
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+UrlManager = function() {
+
+  var self = this;
+  self.state = {};
+
+  self.setParam = function(field,value) {
+    if (field.match(/\[\]$/)) {
+      if (!self.state[field]) {
+        self.state[field] = {};
+      }
+      self.state[field][value] = 1;
+    } else {
+      self.state[field] = value;
+    }
+    self.updateUrl();
+  }
+
+  self.removeParam = function(field,value) {
+    if (field.match(/\[\]$/)) {
+      if (self.state[field] && self.state[field][value]) {
+        delete self.state[field][value];
+      }
+
+    } else {
+      delete self.state[field];
+    }
+    self.updateUrl();
+  }
+
+  self.clearParam = function(field) {
+    delete self.state[field];
+    self.updateUrl();
+  }
+
+  self.getParams = function() {
+    return self.state;
+  }
+
+  // get a specific field
+  self.getParam = function(field) {
+    if (field.match(/\[\]$/)) {
+      var list = [];
+      // return objects as a list
+      if (self.state[field]) {
+        for (key in self.state[field]) {
+          list.push(key);
+        }
+        return list;
+      }
+    } else {
+      return self.state[field];
+    }
+  }
+
+  self.readUrl = function() {
+    var vars = {}, hash;
+    var q = window.location.href.split('?')[1];
+
+    if(q != undefined && q.length){
+      q = q.replace(/#$/,'');
+      q = q.split('&');
+      for(var i = 0; i < q.length; i++){
+        pair = q[i].split('=');
+        var key = pair[0];
+        var val = decodeURIComponent(pair[1]);
+        if (typeof(key) === 'undefined' || typeof(val) === 'undefined') {
+          continue;
+        }
+        if (key.match(/\[\]$/)) {
+          if (!vars[key]) {
+            vars[key] = {};
+          }
+          vars[key][val] = 1;
+        } else {
+          vars[key] = val;
+        }
+      }
+
+      self.state = vars;
+    }
+  }
+
+  self.updateUrl = function() {
+    var params = [];
+
+    for (var field in self.state) {
+
+      if (Object.prototype.toString.call(self.state[field]) == '[object Object]') {
+        for (var value in self.state[field]) {
+          params.push(field+'='+encodeURIComponent(value));
+        }
+      } else {
+        params.push(field+'='+encodeURIComponent(self.state[field]));
+      }
+    }
+
+    var queryString = params.join('&');
+    history.pushState(null, queryString, '?' + queryString);
+  }
+
+  return self;
+}
+
+
+var urlManager = new UrlManager();
+
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
+var default_options = {
+  // ...
+  position: function($elem, $parent) {
+    $elem.css($parent.position());
+  }
+};
+
+function Widget(options) {
+  this.options = jQuery.extend({}, default_options, options || {});
+  this.create();
+};
+
+Widget.prototype.create = function() {
+  this.$container = $("<div></div>").appendTo(document.body);
+  this.$thingie = $("<div></div>").appendTo(this.$container);
+  return this;
+};
+
+Widget.prototype.show = function() {
+  this.options.position(this.$thingie, this.$container);
+  this.$thingie.show();
+  return this;
+};
+
+
+
+var widget = new Widget({
+  position: function($elem, $parent) {
+    var position = $parent.position();
+    // position $elem at the lower right corner of $parent
+    position.left += $parent.width();
+    position.top += $parent.height();
+    $elem.css(position);
+  },
+  position2: function($elem, $parent) {
+    var position = $parent.position();
+    // position $elem at the lower right corner of $parent
+    position.left += $parent.width();
+    position.top += $parent.height();
+    $elem.css(position);
+  }
+});
+widget.show();
+
+
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
+http://localhost:3000/ajax_subpub
+
+
+$.each( data.items, function( i, item ) {
+  $( "<img>" ).attr( "src", item.media.m ).appendTo( "#images" );
+  if ( i === 3 ) {
+    return false;
+  }
+});
+
+
+$('#demo01').trigger('click')
+$('#btn-close-modal').trigger('click')
+
+
+http://localhost:3000/swipe_delete
